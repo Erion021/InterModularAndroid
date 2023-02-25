@@ -10,7 +10,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import zubkov.vadim.pruebasandroiddiseo.screens.login.data.network.UserClient
 import zubkov.vadim.pruebasandroiddiseo.screens.mapscreen.data.network.MapClient
-import zubkov.vadim.pruebasandroiddiseo.screens.menu.data.network.MenuClient
+import zubkov.vadim.pruebasandroiddiseo.screens.menu.data.network.client.CommentClient
+import zubkov.vadim.pruebasandroiddiseo.screens.menu.data.network.client.MenuClient
 import zubkov.vadim.pruebasandroiddiseo.screens.register.data.network.RegisterClient
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.network.PersonClient
 import javax.inject.Singleton
@@ -78,5 +79,11 @@ class NetworkModule {
     @Provides
     fun providePersonClient(retrofit: Retrofit) : PersonClient {
         return retrofit.create(PersonClient::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCommentClient(retrofit: Retrofit) : CommentClient {
+        return retrofit.create(CommentClient::class.java)
     }
 }

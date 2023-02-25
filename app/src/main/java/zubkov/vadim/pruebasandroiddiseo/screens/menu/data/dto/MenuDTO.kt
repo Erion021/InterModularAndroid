@@ -9,7 +9,7 @@ data class MenuDTO(
     @SerializedName("date") var date: String,
     @SerializedName("name") var name:String,
     @SerializedName("category") var category:String,
-    @SerializedName("distance") var distance:Double,
+    @SerializedName("distance") var distance:Int,
     @SerializedName("difficulty") var difficulty:String,
     @SerializedName("duration") var duration:Long,
     @SerializedName("description") var description: String,

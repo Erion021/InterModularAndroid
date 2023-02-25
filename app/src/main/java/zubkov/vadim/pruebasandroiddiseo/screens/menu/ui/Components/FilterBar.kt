@@ -331,8 +331,9 @@ fun SliderDistancia(filter:FilterViewModel){
 fun Actividades(filter:FilterViewModel){
     LazyHorizontalGrid(
         rows = GridCells.Adaptive(70.dp),
-        contentPadding = PaddingValues(60.dp,10.dp,60.dp,20.dp)
+        contentPadding = PaddingValues(8.dp)
     ) {
+
         items(filter.categories) { item ->
             BotonActividades(item,filter)
         }

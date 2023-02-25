@@ -32,6 +32,8 @@ import zubkov.vadim.pruebasandroiddiseo.screens.menu.ui.MenuViewModel
 import zubkov.vadim.pruebasandroiddiseo.screens.models.navigation.Routes
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
 
+var _id = ""
+
 @Composable
 fun MainCard(ruta: MenuDTO, mapViewModel: MapViewModel,navigationController : NavHostController,
              user:PersonDTO,menuViewModel: MenuViewModel,ocultarLike:Boolean=false,onItemClicked: (ruta: MenuDTO) -> Unit){
@@ -42,7 +44,10 @@ fun MainCard(ruta: MenuDTO, mapViewModel: MapViewModel,navigationController : Na
         modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth()
-            .clickable(onClick = { onItemClicked(ruta) }),
+            .clickable(onClick = {
+                _id = ruta._id
+                onItemClicked(ruta)
+            }),
         elevation = 8.dp
     ) {
         Row(
@@ -162,4 +167,43 @@ fun MainCard(ruta: MenuDTO, mapViewModel: MapViewModel,navigationController : Na
             }
         }
     }
+}
+
+@Composable
+fun CorazonFavorito(enabled:Boolean = false) {
+
+/*
+    val interactionSource = MutableInteractionSource()
+    val coroutineScope = rememberCoroutineScope()
+
+    var enabled by remember { mutableStateOf(enabledInitial) }
+
+    val scale = remember { Animatable(1f) }
+
+    Icon(
+        imageVector = Icons.Outlined.Favorite,
+        contentDescription = "favorito",
+        tint = if (enabled) Color.Red else Color.LightGray,
+        modifier = Modifier
+            .scale(scale = scale.value)
+            .size(size = 24.dp)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) {
+                enabled = !enabled
+                coroutineScope.launch {
+                    scale.animateTo(
+                        0.8f,
+                        animationSpec = tween(100),
+                    )
+                    scale.animateTo(
+                        1f,
+                        animationSpec = tween(100),
+                    )
+                }
+            }
+    )
+
+ */
 }

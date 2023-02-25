@@ -20,6 +20,8 @@ import kotlinx.coroutines.withContext
 import zubkov.vadim.pruebasandroiddiseo.screens.login.ui.UserViewModel
 import zubkov.vadim.pruebasandroiddiseo.screens.mapscreen.domin.usecase.MapUseCase
 import zubkov.vadim.pruebasandroiddiseo.screens.menu.domin.entity.MenuModelFactory
+import zubkov.vadim.pruebasandroiddiseo.screens.models.navigation.Routes
+import zubkov.vadim.pruebasandroiddiseo.screens.users.ui.PersonViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -39,6 +41,34 @@ class MapViewModel @Inject constructor(
         isMyLocationEnabled = true,
         mapType = MapType.TERRAIN
     )
+
+    private var _routeName = MutableLiveData<String>()
+    var routeName : MutableLiveData<String> = _routeName
+
+    fun getRouteName(routeName: String){
+        _routeName.value = routeName
+    }
+
+    private var _description = MutableLiveData<String>()
+    var description : MutableLiveData<String> = _description
+
+    fun getDescription(description: String){
+        _description.value = description
+    }
+
+    private var _category = MutableLiveData<String>()
+    var category : MutableLiveData<String> = _category
+
+    private var _difficulty = MutableLiveData<String>()
+    var difficulty : MutableLiveData<String> = _difficulty
+
+    fun getCategory(category: String){
+        _category.value = category
+    }
+
+    fun getDifficulty(difficulty: String){
+        _difficulty.value = difficulty
+    }
 
     private var _arrayMoves = mutableListOf<LatLng>()
     var arrayMoves : MutableList<LatLng> = _arrayMoves
@@ -109,25 +139,25 @@ class MapViewModel @Inject constructor(
         duration.value = duration.value?.plus(durationSave)
     }
 
-    fun MapRecordLatLng(navigationController: NavHostController,userViewModel: UserViewModel) {
+    fun MapRecordLatLng(navigationController: NavHostController, userViewModel:UserViewModel) {
         Log.d("Lat_A_Final","${_selectedLatPointA.value}")
         Log.d("Lng_A_Final","${_selectedLngPointA.value}")
         Log.d("Lat_B_Final","${_selectedLatPointB.value}")
         Log.d("Lng_B_Final","${_selectedLngPointB.value}")
         Log.d("Duration","${duration.value!!/60000}")
+        Log.d("Distance","${getDistance().toInt()}")
         mapLoadingMovement.value = false
         viewModelScope.launch {
             Log.d("State Loop","${mapLoadingMovement.value}")
             val map = mapModelFactory(
-                id = "asdasd",
                 email = userViewModel.email.value!!,
                 date = "${getTime()}",
-                name = "pruebadef",
-                category = "Escalada",
-                distance = getDistance(),
-                difficulty = "facil",
-                duration = 2,
-                description = "aa",
+                name = routeName.value!!,
+                category = category.value!!,
+                distance = getDistance().toInt(),
+                difficulty = difficulty.value!!,
+                duration = duration.value!!/60000,
+                description = description.value!!,
                 privacy = "public",
                 photo = listOf(""),
                 lat_A = selectedLatPointA.value!!,
@@ -136,11 +166,11 @@ class MapViewModel @Inject constructor(
                 lng_B = selectedLngPointB.value!!,
                 rec_movement = arrayMoves
             )
-            //val result = mapUseCase(map)
-            /*if(result) {
+            val result = mapUseCase(map)
+            if(result) {
                 Log.d("Mensaje", "Post Ruta")
                 navigationController.navigate(route = Routes.Home.route)
-            }*/
+            }
         }
     }
 }

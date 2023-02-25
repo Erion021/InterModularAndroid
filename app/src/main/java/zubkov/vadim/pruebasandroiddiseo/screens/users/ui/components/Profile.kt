@@ -50,7 +50,8 @@ fun Profile(navigationController: NavHostController, user:PersonDTO,
             fullScreen:Boolean = false
 ){
         personViewModel.returnPerson(userViewModel)
-        var loggedUser = personViewModel.person.value!!.first()
+    menuViewModel.devolverListaByEmail(user.email)
+    var loggedUser = personViewModel.person.value!!.first()
         var followers = personViewModel.followers(user.email)
         var selectedTabIndex by remember {
             mutableStateOf(0)
@@ -64,7 +65,7 @@ fun Profile(navigationController: NavHostController, user:PersonDTO,
                 navigationController
             )
             Spacer(modifier = Modifier.height(4.dp))
-            ProfileSection(0,followers.size,user.following.size)
+            ProfileSection(menuViewModel.routesListByEmail.value!!.size,followers.size,user.following.size)
             Spacer(modifier = Modifier.height(25.dp))
             ButtonSection(
                 navigationController,
@@ -104,13 +105,11 @@ fun Profile(navigationController: NavHostController, user:PersonDTO,
             when (selectedTabIndex) {
 
                 0 ->
-                    MostrarRutas(
-                        rutasLikeUser(user,menuViewModel.routesList.value!!),
-                        modifier = Modifier.fillMaxWidth(),
-                        navigationController,
+                    MostrarRutasCreadas(
                         mapViewModel,
+                        menuViewModel,
+                        navigationController,
                         user,
-                        menuViewModel
                     )
                 1 -> MostrarRutas(
                     rutasLikeUser(user,menuViewModel.routesList.value!!),
@@ -411,6 +410,36 @@ fun PostTabView(
                         .size(20.dp)
                 )
             }
+        }
+    }
+}
+
+@ExperimentalFoundationApi
+@Composable
+fun MostrarRutasCreadas(
+    mapViewModel: MapViewModel,
+    menuViewModel: MenuViewModel,
+    navigationController: NavHostController,
+    user: PersonDTO,
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFE1E6E1))
+    ) {
+        items(menuViewModel.routesListByEmail.value!!.size) { person ->
+            val route = menuViewModel.routesListByEmail.value!![person]
+            MainCard(
+                ruta = route,
+                mapViewModel = mapViewModel,
+                navigationController = navigationController,
+                user = user,
+                menuViewModel = menuViewModel,
+                onItemClicked = { card ->
+                    menuViewModel.updateActualRoute(card)
+                    navigationController.navigate(Routes.RouteDetail.route)
+                }
+            )
         }
     }
 }

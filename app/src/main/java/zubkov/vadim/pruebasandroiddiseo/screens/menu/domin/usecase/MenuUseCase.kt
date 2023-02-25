@@ -1,7 +1,6 @@
 package zubkov.vadim.pruebasandroiddiseo.screens.menu.domin.usecase
 
-import android.util.Log
-import zubkov.vadim.pruebasandroiddiseo.screens.menu.data.MenuRepository
+import zubkov.vadim.pruebasandroiddiseo.screens.menu.data.repository.MenuRepository
 import zubkov.vadim.pruebasandroiddiseo.screens.menu.data.dto.MenuDTO
 import javax.inject.Inject
 
@@ -20,4 +19,7 @@ class MenuUseCase @Inject constructor(
         repository.unlikeRoute(email,idRuta)
     }
 
+    suspend fun getRouteByEmail(email : String) : List<MenuDTO>{
+        return repository.getRouteEmailRepository(email)
+    }
 }

@@ -9,7 +9,8 @@ import zubkov.vadim.pruebasandroiddiseo.screens.menu.data.dto.MenuDTO
 
 class FilterViewModel:ViewModel() {
 
-    val categories = listOf("Senderismo", "Alpinismo", "Escalada", "Kayak","Ciclismo", "Carrera")
+    val categories = listOf("Senderismo", "Ciclismo","Escalada", "Alpinismo",
+        "Cicloturismo","Carrera","Motociclismo","Barranco")
 
     val dificulties = listOf("Muy facil","Facil","Mediana","Dificil","Muy Dificil","Extrema")
 

@@ -1,16 +1,22 @@
 package zubkov.vadim.pruebasandroiddiseo.Components
 
+import android.Manifest
+import android.util.Log
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.filled.Send
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,15 +32,29 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.*
 import zubkov.vadim.pruebasandroiddiseo.R
+import zubkov.vadim.pruebasandroiddiseo.screens.login.ui.UserViewModel
+import zubkov.vadim.pruebasandroiddiseo.screens.mapscreen.ui.MapViewModel
+import zubkov.vadim.pruebasandroiddiseo.screens.menu.data.dto.CommentDTO
 import zubkov.vadim.pruebasandroiddiseo.screens.menu.data.dto.MenuDTO
 
 import zubkov.vadim.pruebasandroiddiseo.screens.menu.ui.MenuViewModel
+import zubkov.vadim.pruebasandroiddiseo.screens.menu.ui.Components.CorazonFavorito
+import zubkov.vadim.pruebasandroiddiseo.screens.menu.ui.Components._id
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CardExtended(navigationController: NavHostController,menuViewModel: MenuViewModel){
+fun CardExtended(navigationController: NavHostController,menuViewModel: MenuViewModel,userViewModel: UserViewModel,idPublication : String,mapViewModel: MapViewModel){
 
+    menuViewModel.devolverComentariosRuta(_id)
     val route = menuViewModel.actualRoute.value!!
+    Log.d("ID",idPublication)
     Scaffold(
         topBar = {
             TopAppBar(
@@ -62,12 +82,31 @@ fun CardExtended(navigationController: NavHostController,menuViewModel: MenuView
                 },
 
                 actions = {
+                    //if (!tarjetaDeUsuario) {
+                        CorazonFavorito()
+                    /*
+                        else{
+                        val interactionSource = MutableInteractionSource()
+                        Icon(
+                            imageVector = Icons.Outlined.Close,
+                            contentDescription = "favorito",
+                            tint = Color.LightGray,
+                            modifier = Modifier
+                                .scale(scale = 1f)
+                                .size(size = 24.dp)
+                                .clickable(
+                                    interactionSource = interactionSource,
+                                    indication = null
+                                ) { /*cardViewModel.openConfirmarBorrado()*/ }
+                        )
+                    }
+                     */
                 }
             )
         },
 
         content = {
-            CardExtendedComp(navigationController,route)
+            CardExtendedComp(navigationController,route,menuViewModel, userViewModel, idPublication, mapViewModel)
         }
     )
 }
@@ -75,31 +114,45 @@ fun CardExtended(navigationController: NavHostController,menuViewModel: MenuView
 
 
 @Composable
-fun CardExtendedComp(navigationController: NavHostController,ruta:MenuDTO)
+fun CardExtendedComp(navigationController: NavHostController,ruta:MenuDTO,menuViewModel: MenuViewModel,userViewModel: UserViewModel,idPublication : String,mapViewModel: MapViewModel)
 {
+    val scrollState = rememberScrollState()
+    val lazyScrollState = rememberLazyListState()
     Column(
-        modifier = Modifier
+        Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background)
-            .verticalScroll(rememberScrollState())
-    ) {
+    ){
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(0.76f)
+                .verticalScroll(scrollState)
+        ) {
             Carousel(listOf(R.drawable.background,R.drawable.background,R.drawable.background))
             Spacer(modifier = Modifier.height(16.dp))
-            CardInfo(navigationController,ruta)
-    }
-}
+            CardInfo(navigationController,ruta,menuViewModel, userViewModel, idPublication, mapViewModel)
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        LazyColumn(
+            modifier = Modifier.weight(0.2f),
+            state = lazyScrollState
+        ) {
+            if (menuViewModel.commentList.value!!.isEmpty()){
+                item{
+                    Text("Se el primero en comentar")
+                }
+            } else {
+                items(menuViewModel.commentList.value!!.size) { person ->
+                    val comment = menuViewModel.commentList.value!![person]
+                    CommentsSection(navigationController, comment)
+                }
+            }
+        }
 
-@Composable
-fun ImageRuta(image:Int){
-    Image(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(346.dp),
-        painter = painterResource(image),
-        alignment = Alignment.CenterStart,
-        contentDescription = "",
-        contentScale = ContentScale.Crop
-    )
+        LaunchedEffect(lazyScrollState) {
+            scrollState.scrollTo(lazyScrollState.firstVisibleItemScrollOffset)
+        }
+    }
 }
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalPagerApi::class)
@@ -176,7 +229,7 @@ fun DotsIndicator(
 }
 
 @Composable
-fun CardInfo(navigationController: NavHostController, ruta: MenuDTO) {
+fun CardInfo(navigationController: NavHostController, ruta: MenuDTO,menuViewModel: MenuViewModel,userViewModel: UserViewModel,idPublication : String,mapViewModel: MapViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -186,7 +239,7 @@ fun CardInfo(navigationController: NavHostController, ruta: MenuDTO) {
         Column(modifier = Modifier.align(Alignment.CenterVertically)) {
             HeaderCard(navigationController,ruta)
             MidCard(ruta)
-            BottomCard(ruta)
+            BottomCard(ruta, menuViewModel = menuViewModel, userViewModel = userViewModel, idPublication = idPublication,mapViewModel = mapViewModel)
         }
     }
 }
@@ -238,7 +291,9 @@ fun MidCard(ruta:MenuDTO){
 }
 
 @Composable
-fun BottomCard(ruta:MenuDTO){
+fun BottomCard(ruta:MenuDTO,menuViewModel: MenuViewModel,userViewModel: UserViewModel,idPublication : String,mapViewModel: MapViewModel){
+    val message: String by menuViewModel.message.observeAsState(initial = "")
+
     Spacer(modifier = Modifier.height(24.dp))
     Title(title = "Info Ruta")
     Spacer(modifier = Modifier.height(16.dp))
@@ -251,6 +306,67 @@ fun BottomCard(ruta:MenuDTO){
         MiniInfoCard(title = "Distancia", value = "${ruta.distance} km")
         MiniInfoCard(title = "Dificultad", value = ruta.difficulty)
         MiniInfoCard(title = "Actividad", value = ruta.category)
+    }
+    Spacer(modifier = Modifier.height(16.dp))
+    GoogleMaps(ruta = ruta, mapViewModel = mapViewModel)
+    Spacer(modifier = Modifier.height(16.dp))
+    PostComment(
+        Modifier
+            .fillMaxWidth(),
+        menuViewModel = menuViewModel,
+        userViewModel = userViewModel,
+        idPublication = idPublication,
+        message = message,
+        onTextChanged = {
+            menuViewModel.onMessageChange(it)
+        }
+    )
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun GoogleMaps(ruta:MenuDTO,mapViewModel : MapViewModel){
+    Box(
+        modifier = Modifier
+            .height(300.dp)
+            .fillMaxWidth()
+    ){
+        val locationPermissionState = rememberPermissionState(
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        val middlePoint = LatLng((ruta.lat_A + ruta.lng_A) / 2, (ruta.lat_B + ruta.lng_B) / 2)
+        val cameraPosition = rememberCameraPositionState{
+            position = CameraPosition.fromLatLngZoom(LatLng(ruta.lat_A , ruta.lng_A),10f)
+        }
+
+        if (locationPermissionState.status.isGranted){
+            GoogleMap(
+                properties = mapViewModel.properties,
+                cameraPositionState = cameraPosition
+            ){
+                //Position A
+                Marker(
+                    state = MarkerState(
+                        position = LatLng(ruta.lat_A,ruta.lng_A)
+                    )
+                )
+
+                //Position B
+                Marker(
+                    state = MarkerState(
+                        position = LatLng(ruta.lat_B,ruta.lng_B)
+                    )
+                )
+
+                Polyline(
+                    points = ruta.rec_movement
+                )
+            }
+        } else {
+            LaunchedEffect(locationPermissionState.status.isGranted){
+                locationPermissionState.launchPermissionRequest()
+            }
+        }
     }
 }
 
@@ -318,82 +434,74 @@ fun MiniInfoCard(title: String, value: String) {
     }
 }
 
-/*
 @Composable
-@ExperimentalFoundationApi
-fun DialogoEliminar(
-    onSuccess: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = {onDismiss},
-
-        title = {
-            Text("¿Estás seguro que deseas borrar esta ruta?")
-        },
-        text = {
-            Text("Esta acción no es reversible. ¿Estás seguro que deseas continuar?")
-        },
-        confirmButton = {
-            Row(modifier = Modifier.padding(0.dp,0.dp,55.dp,10.dp)) {
-                Button(
-                    onClick = {onDismiss},
-                ) {
-                    Text("Cancelar")
-                }
-            }
-        },
-        dismissButton = {
-            Row(
-                modifier = Modifier.padding(0.dp,0.dp,0.dp,0.dp)) {
-                Button(
-                    onClick = {onSuccess},
-                ) {
-                    Text("Borrar")
-                }
-            }
-        },
-    )
-}
-*/
-
-@Composable
-private fun DialogoEliminar(
-    onSuccess: () -> Unit,
-    onDismiss: () -> Unit,)
-{
-    Dialog(
-        onDismissRequest = { onDismiss()},
-        properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+fun CommentsSection(navigationController: NavHostController,comment : CommentDTO){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp)
     ) {
-        Column(
+        LoadComments(Modifier
+            .fillMaxWidth(),
+            navigationController,
+            comment
+        )
+    }
+}
+
+@Composable
+fun PostComment(modifier : Modifier, menuViewModel: MenuViewModel, userViewModel: UserViewModel, idPublication : String, onTextChanged : (String) -> Unit, message : String){
+    Row(
+        modifier = modifier
+    ){
+        TextField(
+            value = message,
+            onValueChange = {
+                onTextChanged(it)
+            },
+            label = {
+                Text("Comenta")
+            },
             modifier = Modifier
-                .padding(20.dp)
-                .fillMaxWidth()
-                .background(Color.White)
-                .height(290.dp)
-                .border(border = BorderStroke(0.3.dp, Color.Black)),
+                .width(400.dp),
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Send,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .clickable {
+                            menuViewModel.postComment(userViewModel,idPublication)
+                        }
+                )
+            },
+            singleLine = true
+        )
+    }
+}
 
-            ) {
+@Composable
+fun LoadComments(modifier: Modifier,navigationController: NavHostController, ruta : CommentDTO){
+    Column(
+        modifier = modifier
+    ){
+        cardComments(text = ruta.message, modifier = Modifier.fillMaxWidth(), navigationController,ruta)
+    }
+}
 
-            Spacer(modifier = Modifier.height(10.dp))
-            Text("¿Estás seguro que deseas borrar esta ruta?")
-            Spacer(modifier = Modifier.height(30.dp))
-            Text("Esta acción no es reversible. ¿Estás seguro que deseas continuar?")
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(){
-                Button(
-                    onClick = {onSuccess},
-                ) {
-                    Text("Borrar")
-                }
-                Button(
-                        onClick = {onDismiss},
-                ) {
-                Text("Cancelar")
-            }
-
-            }
+@Composable
+fun cardComments(text : String,modifier : Modifier,navigationController : NavHostController, ruta : CommentDTO){
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(5.dp)
+    ){
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp, 8.dp, 0.dp, 8.dp)) {
+            Text(
+                text = text,
+                modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 0.dp),
+                color = Color.Black,
+                style = MaterialTheme.typography.caption,
+            )
         }
     }
 }

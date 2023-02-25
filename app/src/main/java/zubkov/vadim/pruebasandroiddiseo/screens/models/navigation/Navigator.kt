@@ -14,6 +14,8 @@ import zubkov.vadim.pruebasandroiddiseo.screens.login.Login
 import zubkov.vadim.pruebasandroiddiseo.screens.login.ui.UserViewModel
 import zubkov.vadim.pruebasandroiddiseo.screens.mapscreen.GoogleMapsView
 import zubkov.vadim.pruebasandroiddiseo.screens.mapscreen.MapaGoogle
+import zubkov.vadim.pruebasandroiddiseo.screens.mapscreen.ui.PostRouteScreen
+import zubkov.vadim.pruebasandroiddiseo.screens.menu.ui.Components._id
 import zubkov.vadim.pruebasandroiddiseo.screens.register.RegisterScreen
 import zubkov.vadim.pruebasandroiddiseo.screens.register.ui.viewmodel.RegisterViewModel
 import zubkov.vadim.pruebasandroiddiseo.screens.register.ui.views.RegisterLastScreen
@@ -38,6 +40,8 @@ fun CustomNavigator(
     val navigationController = rememberNavController()
 
     menuViewModel.devolverLista()
+    menuViewModel.devolverComentariosRuta(_id)
+    menuViewModel.devolverListaByEmail("")
     NavHost(navController = navigationController, startDestination = Routes.SplashScreen.route) {
         composable(route = Routes.SplashScreen.route){
             SplashScreen(navigationController = navigationController)
@@ -55,19 +59,22 @@ fun CustomNavigator(
             RegisterLastScreen(navigationController = navigationController, registerViewModel = registerViewModel)
         }
         composable(route = Routes.Home.route) {
-
             Menu(navigationController = navigationController, menuViewModel = menuViewModel,mapViewModel = mapViewModel,
                 personViewModel = personViewModel, userViewModel = userViewModel
             )
         }
         composable(route = Routes.RouteDetail.route) {
-            CardExtended(navigationController = navigationController,menuViewModel)
+            CardExtended(navigationController = navigationController,menuViewModel,userViewModel,
+                _id,mapViewModel)
         }
         composable(route = Routes.GmapScreen.route) {
-            MapaGoogle(navigationController = navigationController, mapViewModel = mapViewModel, userViewModel = userViewModel)
+            MapaGoogle(navigationController = navigationController, mapViewModel = mapViewModel)
+        }
+        composable(route = Routes.GmapView.route) {
+            GoogleMapsView(navigationController = navigationController, mapViewModel = mapViewModel)
         }
         composable(route = Routes.GmapPost.route) {
-            GoogleMapsView(navigationController = navigationController, mapViewModel = mapViewModel)
+            PostRouteScreen(navigationController = navigationController, mapViewModel = mapViewModel, userViewModel = userViewModel)
         }
         composable(route = Routes.Person.route) {
             PersonScreen(navigationController = navigationController,personViewModel,userViewModel,mapViewModel,menuViewModel)
