@@ -30,23 +30,11 @@ import zubkov.vadim.pruebasandroiddiseo.R
 import zubkov.vadim.pruebasandroiddiseo.screens.menu.data.dto.MenuDTO
 
 import zubkov.vadim.pruebasandroiddiseo.screens.menu.ui.MenuViewModel
-import zubkov.vadim.pruebasandroiddiseo.screens.menu.ui.Components.CorazonFavorito
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CardExtended(navigationController: NavHostController,menuViewModel: MenuViewModel){
 
     val route = menuViewModel.actualRoute.value!!
-    /*
-    val tarjetaDeUsuario = globalViewModel.usuarioRegistrado.value!!.id == ruta.usuarioPublicado.id
-
-    val showDialog by cardViewModel.showConfirmarBorrado.observeAsState(initial = false)
-    if (showDialog == true) {
-        DialogoEliminar({cardViewModel.confirmarBorrado(idRuta,navigationController) },
-            {cardViewModel.cerrarConfirmarBorrado() })
-
-    }
-    */
     Scaffold(
         topBar = {
             TopAppBar(
@@ -74,25 +62,6 @@ fun CardExtended(navigationController: NavHostController,menuViewModel: MenuView
                 },
 
                 actions = {
-                    //if (!tarjetaDeUsuario) {
-                        CorazonFavorito()
-                    /*
-                        else{
-                        val interactionSource = MutableInteractionSource()
-                        Icon(
-                            imageVector = Icons.Outlined.Close,
-                            contentDescription = "favorito",
-                            tint = Color.LightGray,
-                            modifier = Modifier
-                                .scale(scale = 1f)
-                                .size(size = 24.dp)
-                                .clickable(
-                                    interactionSource = interactionSource,
-                                    indication = null
-                                ) { /*cardViewModel.openConfirmarBorrado()*/ }
-                        )
-                    }
-                     */
                 }
             )
         },

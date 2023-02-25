@@ -11,4 +11,17 @@ class PersonRepository @Inject constructor(
     suspend fun getPersonRepository(email: String):List<PersonDTO>{
         return api.getPerson(email)
     }
+
+    suspend fun getFollowers(email: String):List<PersonDTO>{
+        return api.getFollowers(email)
+    }
+
+    suspend fun followUser(email: String,emailSeguir: String){
+        return api.followUser(email,emailSeguir)
+    }
+
+    suspend fun unfollowUser(email: String,emailSeguir: String){
+        return api.unfollowUser(email,emailSeguir)
+    }
+
 }

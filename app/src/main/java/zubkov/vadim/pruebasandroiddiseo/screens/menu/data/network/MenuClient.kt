@@ -19,8 +19,4 @@ interface MenuClient {
     suspend fun unlikeRoute(
         @Body body:LikeBody
     )
-
-
-
-
 }

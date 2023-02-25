@@ -50,10 +50,8 @@ fun Profile(navigationController: NavHostController, user:PersonDTO,
             fullScreen:Boolean = false
 ){
         personViewModel.returnPerson(userViewModel)
-        var perfilPropio = false
-        if (user.email == personViewModel.person.value!!.first().email){
-            perfilPropio = true
-        }
+        var loggedUser = personViewModel.person.value!!.first()
+        var followers = personViewModel.followers(user.email)
         var selectedTabIndex by remember {
             mutableStateOf(0)
         }
@@ -63,17 +61,17 @@ fun Profile(navigationController: NavHostController, user:PersonDTO,
             Header(
                 name = user.nick,
                 fullScreen,
-                perfilPropio,
                 navigationController
             )
             Spacer(modifier = Modifier.height(4.dp))
-            ProfileSection(user)
+            ProfileSection(0,followers.size,user.following.size)
             Spacer(modifier = Modifier.height(25.dp))
             ButtonSection(
                 navigationController,
                 modifier = Modifier.fillMaxWidth(),
                 user,
-                perfilPropio
+                loggedUser,
+                personViewModel
             )
             Spacer(modifier = Modifier.height(25.dp))
 
@@ -123,12 +121,12 @@ fun Profile(navigationController: NavHostController, user:PersonDTO,
                     menuViewModel
                 )
                 2 -> MostrarUsuarios(
-                    listOf(),
+                    user.following,
                     modifier = Modifier.fillMaxWidth(),
                     navigationController
                 )
                 3 -> MostrarUsuarios(
-                    listOf(),
+                    followers,
                     modifier = Modifier.fillMaxWidth(),
                     navigationController
                 )
@@ -148,7 +146,6 @@ fun rutasLikeUser(user: PersonDTO,listaRutas:List<MenuDTO>):List<MenuDTO>
 fun Header(
     name: String,
     mostrarAtras : Boolean,
-    mostrarlogout : Boolean,
     navigationController: NavHostController,
 ) {
         Box(
@@ -177,29 +174,12 @@ fun Header(
                 fontSize = 20.sp,
                 modifier = Modifier.align(Alignment.Center)
             )
-
-            if (mostrarlogout) {
-                IconButton(enabled = true,
-                    modifier = Modifier.align(Alignment.CenterEnd),
-                    onClick = {
-                        /*globalViewModel.logout()
-                              navigationController.navigate(Routes.Home.route)*/
-                              },
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ExitToApp,
-                        contentDescription = "LogOut",
-                        tint = Color.Black
-                    )
-                }
-            }
-
     }
 }
 
 @Composable
 fun ProfileSection(
-    usuario: PersonDTO,
+    rutas:Int,seguidores:Int,seguidos:Int,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -216,7 +196,7 @@ fun ProfileSection(
                     .weight(3f)
             )
             Spacer(modifier = Modifier.width(16.dp))
-            StatSection(modifier = Modifier.weight(7f),usuario)
+            StatSection(modifier = Modifier.weight(7f),rutas,seguidores,seguidos)
         }
     }
 }
@@ -242,15 +222,15 @@ fun RoundImage(
 }
 
 @Composable
-fun StatSection(modifier: Modifier = Modifier,usuario: PersonDTO) {
+fun StatSection(modifier: Modifier = Modifier,rutas:Int,seguidores:Int,siguiendo:Int) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = modifier
     ) {
-        ProfileStat(numberText = "0" , text = "Rutas")
-        ProfileStat(numberText = "0"  , text = "Seguidores")
-        ProfileStat(numberText = usuario.following.size.toString(), text = "Siguiendo")
+        ProfileStat(numberText = rutas.toString() , text = "Rutas")
+        ProfileStat(numberText = siguiendo.toString(), text = "Siguiendo")
+        ProfileStat(numberText = seguidores.toString() , text = "Seguidores")
     }
 }
 
@@ -280,7 +260,8 @@ fun ButtonSection(
     navigationController: NavHostController,
     modifier: Modifier = Modifier,
     user:PersonDTO,
-    perfilPropio : Boolean
+    loggedUser:PersonDTO,
+    personViewModel: PersonViewModel
 ) {
     val minWidth = 175.dp
     val height = 35.dp
@@ -297,13 +278,15 @@ fun ButtonSection(
             navigationController = navigationController,
             user = user
         )
-        if (!perfilPropio) {
-            BotonSeguirUser(
-                modifier = Modifier
-                    .defaultMinSize(minWidth = minWidth)
-                    .height(height)
-            )
-        }
+        BotonSeguirUser(
+            Modifier
+                .defaultMinSize(minWidth = minWidth)
+                .height(height),
+            user,
+            loggedUser,
+            personViewModel
+        )
+
     }
 }
 
@@ -352,39 +335,44 @@ user:PersonDTO
 @Composable
 fun BotonSeguirUser(
     modifier: Modifier = Modifier,
-    //globalViewModel: GlobalViewModel,
-    //idUser:Int
+    user:PersonDTO,
+    loggedUser:PersonDTO,
+    personViewModel: PersonViewModel
 ) {
-
-    //val usuarioSiguiendo = globalViewModel.usuarioRegistrado.value!!.seguidos
-    var siguiendo by remember {mutableStateOf(true)}
-
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .clickable {
-                siguiendo = !siguiendo
-            }
-            .background(Color.LightGray, shape = RoundedCornerShape(12.dp))
-            .clip(RoundedCornerShape(12.dp))
-            .border(
-                width = 1.5.dp,
-                color = MaterialTheme.colors.background,
-                shape = RoundedCornerShape(12.dp)
+    if (user.email != loggedUser.email) {
+        var siguiendo by remember {mutableStateOf(user.email in loggedUser.following)}
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier
+                .clickable {
+                    if(siguiendo){
+                        personViewModel.unfollowUser(loggedUser.email,user.email)
+                    }else{
+                        personViewModel.followUser(loggedUser.email,user.email)
+                    }
+                    siguiendo = !siguiendo
+                }
+                .background(Color.LightGray, shape = RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(12.dp))
+                .border(
+                    width = 1.5.dp,
+                    color = MaterialTheme.colors.background,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .padding(6.dp)
+        ) {
+            Text(
+                text = if (siguiendo) "Dejar de seguir  " else "Seguir  ",
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp
             )
-            .padding(6.dp)
-    ) {
-        Text(
-            text = if (siguiendo) "Dejar de seguir  " else "Seguir  ",
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp
-        )
-        Icon(
-            imageVector = if (siguiendo) Icons.Filled.Close else Icons.Filled.Check ,
-            contentDescription = null,
-            tint = if (siguiendo) Color.Red else Color.Green
-        )
+            Icon(
+                imageVector = if (siguiendo) Icons.Filled.Close else Icons.Filled.Check,
+                contentDescription = null,
+                tint = if (siguiendo) Color.Red else Color.Green
+            )
+        }
     }
 }
 
@@ -455,18 +443,17 @@ fun MostrarRutas(
 @ExperimentalFoundationApi
 @Composable
 fun MostrarUsuarios(
-    idUsers: List<Int>,
+    users: List<String>,
     modifier: Modifier = Modifier,
     navigationController: NavHostController
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
+    LazyColumn(
         modifier = modifier
             .scale(1.01f)
             .fillMaxHeight()
     ) {
-        items(idUsers.size) {
-            //CardUsuario(StaticData().getUsuario(it),navigationController)
+        items(users) {
+            CardUsuario(it,navigationController)
         }
     }
 }

@@ -58,7 +58,7 @@ fun PersonScreen(navigationController: NavHostController,personViewModel: Person
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.background)
+                .background(Color(0xFFE1E6E1))
                 .padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

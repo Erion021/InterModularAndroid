@@ -42,4 +42,24 @@ class PersonViewModel @Inject constructor(
         }
         return person
     }
+
+    fun followUser(email:String, emailSeguir: String){
+        viewModelScope.launch {
+            personUseCase.followUser(email,emailSeguir)
+        }
+    }
+
+    fun unfollowUser(email:String, emailSeguir: String){
+        viewModelScope.launch {
+            personUseCase.unfollowUser(email,emailSeguir)
+        }
+    }
+
+    fun followers(email:String):List<String>{
+        var followers : List<String>
+        runBlocking {
+            followers = personUseCase.getFollowers(email).map{it.email}
+        }
+        return followers
+    }
 }

@@ -13,4 +13,17 @@ class PersonUseCase @Inject constructor(
             email = email
         )
     }
+
+    suspend fun getFollowers(email:String):List<PersonDTO>{
+        return repository.getFollowers(email)
+    }
+
+    suspend fun followUser(email:String, emailSeguir : String){
+        repository.followUser(email,emailSeguir)
+    }
+
+
+    suspend fun unfollowUser(email:String, emailSeguir : String){
+        repository.unfollowUser(email,emailSeguir)
+    }
 }
