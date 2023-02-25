@@ -10,7 +10,9 @@ class RegisterDTOFactory @Inject constructor(){
         date : String,
         nick : String,
         email: String,
-        password: String
+        password: String,
+        photo : String,
+        description : String
     ) : RegisterDTO {
         return RegisterDTO(
             name = name,
@@ -18,7 +20,9 @@ class RegisterDTOFactory @Inject constructor(){
             date = date,
             nick = nick,
             email = email,
-            password = password
+            password = password,
+            photo = photo,
+            description = description
         )
     }
 }

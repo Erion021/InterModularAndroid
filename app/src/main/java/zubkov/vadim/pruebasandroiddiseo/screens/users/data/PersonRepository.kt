@@ -1,6 +1,7 @@
 package zubkov.vadim.pruebasandroiddiseo.screens.users.data
 
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
+import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.UpdateFields
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.network.PersonService
 import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.PersonModel
 import javax.inject.Inject

@@ -10,7 +10,9 @@ class PersonModelFactory @Inject constructor(){
         date : String,
         nick : String,
         following : List<String>,
-        photo : String
+        photo : String,
+        description : String,
+        fav_routes : List<String>
     ) : PersonModel {
         return PersonModel(
             name = name,
@@ -19,7 +21,9 @@ class PersonModelFactory @Inject constructor(){
             date = date,
             nick = nick,
             following = following,
-            photo = photo
+            photo = photo,
+            description = description,
+            fav_routes = fav_routes
         )
     }
 }

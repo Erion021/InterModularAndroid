@@ -39,146 +39,152 @@ import zubkov.vadim.pruebasandroiddiseo.screens.menu.ui.Components.MainCard
 import zubkov.vadim.pruebasandroiddiseo.screens.menu.ui.MenuViewModel
 import zubkov.vadim.pruebasandroiddiseo.screens.models.navigation.Routes
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
+import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.*
 import zubkov.vadim.pruebasandroiddiseo.screens.users.ui.PersonViewModel
-
 
 @ExperimentalFoundationApi
 @Composable
-fun Profile(navigationController: NavHostController, user:PersonDTO,
-            mapViewModel: MapViewModel,menuViewModel: MenuViewModel,
-            userViewModel: UserViewModel,personViewModel: PersonViewModel,
-            fullScreen:Boolean = false
-){
-        personViewModel.returnPerson(userViewModel)
+fun Profile(
+    navigationController: NavHostController, user: PersonDTO,
+    mapViewModel: MapViewModel, menuViewModel: MenuViewModel,
+    userViewModel: UserViewModel, personViewModel: PersonViewModel,
+    fullScreen: Boolean = false
+) {
+    personViewModel.returnPerson(userViewModel)
     menuViewModel.devolverListaByEmail(user.email)
     var loggedUser = personViewModel.person.value!!.first()
-        var followers = personViewModel.followers(user.email)
-        var selectedTabIndex by remember {
-            mutableStateOf(0)
-        }
-        Column(modifier = Modifier
+    var followers = personViewModel.followers(user.email)
+    var selectedTabIndex by remember {
+        mutableStateOf(0)
+    }
+    Column(
+        modifier = Modifier
             .fillMaxWidth()
-            .background(Color.LightGray)) {
-            Header(
-                name = user.nick,
-                fullScreen,
+            .background(Color.LightGray)
+    ) {
+        Header(
+            name = user.nick,
+            fullScreen,
+            navigationController
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        ProfileSection(
+            menuViewModel.routesListByEmail.value!!.size,
+            followers.size,
+            user.following.size
+        )
+        Spacer(modifier = Modifier.height(25.dp))
+        ButtonSection(
+            navigationController,
+            modifier = Modifier.fillMaxWidth(),
+            user,
+            loggedUser,
+            personViewModel
+        )
+        Spacer(modifier = Modifier.height(25.dp))
+
+        PostTabView(
+            modifier = Modifier
+                .background(MaterialTheme.colors.background)
+                .padding(0.dp, 0.dp, 0.dp, 2.dp),
+            imageWithTexts = listOf(
+                ImageWithText(
+                    image = painterResource(id = R.drawable.rutas),
+                    text = "Rutas"
+                ),
+                ImageWithText(
+                    image = painterResource(id = R.drawable.corazon),
+                    text = "Likes"
+                ),
+                ImageWithText(
+                    image = painterResource(id = R.drawable.seguidos),
+                    text = "Seguidos"
+                ),
+                ImageWithText(
+                    image = painterResource(id = R.drawable.seguidores),
+                    text = "Seguidores"
+                ),
+            )
+        ) {
+            selectedTabIndex = it
+        }
+
+        when (selectedTabIndex) {
+
+            0 ->
+                MostrarRutasCreadas(
+                    mapViewModel,
+                    menuViewModel,
+                    navigationController,
+                    user,
+                )
+            1 -> MostrarRutas(
+                rutasLikeUser(user, menuViewModel.routesList.value!!),
+                modifier = Modifier.fillMaxWidth(),
+                navigationController,
+                mapViewModel,
+                user,
+                menuViewModel
+            )
+            2 -> MostrarUsuarios(
+                user.following,
+                modifier = Modifier.fillMaxWidth(),
                 navigationController
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            ProfileSection(menuViewModel.routesListByEmail.value!!.size,followers.size,user.following.size)
-            Spacer(modifier = Modifier.height(25.dp))
-            ButtonSection(
-                navigationController,
+            3 -> MostrarUsuarios(
+                followers,
                 modifier = Modifier.fillMaxWidth(),
-                user,
-                loggedUser,
-                personViewModel
+                navigationController
             )
-            Spacer(modifier = Modifier.height(25.dp))
-
-            PostTabView(
-                modifier = Modifier
-                    .background(MaterialTheme.colors.background)
-                    .padding(0.dp, 0.dp, 0.dp, 2.dp),
-                imageWithTexts = listOf(
-                    ImageWithText(
-                        image = painterResource(id = R.drawable.rutas),
-                        text = "Rutas"
-                    ),
-                    ImageWithText(
-                        image = painterResource(id = R.drawable.corazon),
-                        text = "Likes"
-                    ),
-                    ImageWithText(
-                        image = painterResource(id = R.drawable.seguidos),
-                        text = "Seguidos"
-                    ),
-                    ImageWithText(
-                        image = painterResource(id = R.drawable.seguidores),
-                        text = "Seguidores"
-                    ),
-                )
-            ) {
-                selectedTabIndex = it
-            }
-
-            when (selectedTabIndex) {
-
-                0 ->
-                    MostrarRutasCreadas(
-                        mapViewModel,
-                        menuViewModel,
-                        navigationController,
-                        user,
-                    )
-                1 -> MostrarRutas(
-                    rutasLikeUser(user,menuViewModel.routesList.value!!),
-                    modifier = Modifier.fillMaxWidth(),
-                    navigationController,
-                    mapViewModel,
-                    user,
-                    menuViewModel
-                )
-                2 -> MostrarUsuarios(
-                    user.following,
-                    modifier = Modifier.fillMaxWidth(),
-                    navigationController
-                )
-                3 -> MostrarUsuarios(
-                    followers,
-                    modifier = Modifier.fillMaxWidth(),
-                    navigationController
-                )
-            }
-
-
         }
+
+
     }
+}
 
 
-fun rutasLikeUser(user: PersonDTO,listaRutas:List<MenuDTO>):List<MenuDTO>
-{
-    return listaRutas.filter{ruta-> ruta._id in user.fav_routes}
+fun rutasLikeUser(user: PersonDTO, listaRutas: List<MenuDTO>): List<MenuDTO> {
+    return listaRutas.filter { ruta -> ruta._id in user.fav_routes }
 }
 
 @Composable
 fun Header(
     name: String,
-    mostrarAtras : Boolean,
+    mostrarAtras: Boolean,
     navigationController: NavHostController,
 ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(5.dp)
-        ) {
-            if(mostrarAtras) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.Black,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.CenterStart)
-                        .clickable {
-                            navigationController.navigateUp()
-                        }
-                )
-            }
-
-            Text(
-                text = name,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                modifier = Modifier.align(Alignment.Center)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(5.dp)
+    ) {
+        if (mostrarAtras) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.Black,
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.CenterStart)
+                    .clickable {
+                        navigationController.navigateUp()
+                    }
             )
+        }
+
+        Text(
+            text = name,
+            overflow = TextOverflow.Ellipsis,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
 }
 
 @Composable
 fun ProfileSection(
-    rutas:Int,seguidores:Int,seguidos:Int,
+    rutas: Int, seguidores: Int, seguidos: Int,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -195,7 +201,7 @@ fun ProfileSection(
                     .weight(3f)
             )
             Spacer(modifier = Modifier.width(16.dp))
-            StatSection(modifier = Modifier.weight(7f),rutas,seguidores,seguidos)
+            StatSection(modifier = Modifier.weight(7f), rutas, seguidores, seguidos)
         }
     }
 }
@@ -221,15 +227,15 @@ fun RoundImage(
 }
 
 @Composable
-fun StatSection(modifier: Modifier = Modifier,rutas:Int,seguidores:Int,siguiendo:Int) {
+fun StatSection(modifier: Modifier = Modifier, rutas: Int, seguidores: Int, siguiendo: Int) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = modifier
     ) {
-        ProfileStat(numberText = rutas.toString() , text = "Rutas")
+        ProfileStat(numberText = rutas.toString(), text = "Rutas")
         ProfileStat(numberText = siguiendo.toString(), text = "Siguiendo")
-        ProfileStat(numberText = seguidores.toString() , text = "Seguidores")
+        ProfileStat(numberText = seguidores.toString(), text = "Seguidores")
     }
 }
 
@@ -258,8 +264,8 @@ fun ProfileStat(
 fun ButtonSection(
     navigationController: NavHostController,
     modifier: Modifier = Modifier,
-    user:PersonDTO,
-    loggedUser:PersonDTO,
+    user: PersonDTO,
+    loggedUser: PersonDTO,
     personViewModel: PersonViewModel
 ) {
     val minWidth = 175.dp
@@ -292,11 +298,11 @@ fun ButtonSection(
 
 @Composable
 fun BotonDetalleUser(
-modifier: Modifier = Modifier,
-text: String? = null,
-icon: ImageVector? = null,
-navigationController: NavHostController,
-user:PersonDTO
+    modifier: Modifier = Modifier,
+    text: String? = null,
+    icon: ImageVector? = null,
+    navigationController: NavHostController,
+    user: PersonDTO
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -314,14 +320,14 @@ user:PersonDTO
             )
             .padding(6.dp)
     ) {
-        if(text != null) {
+        if (text != null) {
             Text(
                 text = text,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp
             )
         }
-        if(icon != null) {
+        if (icon != null) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
@@ -334,21 +340,21 @@ user:PersonDTO
 @Composable
 fun BotonSeguirUser(
     modifier: Modifier = Modifier,
-    user:PersonDTO,
-    loggedUser:PersonDTO,
+    user: PersonDTO,
+    loggedUser: PersonDTO,
     personViewModel: PersonViewModel
 ) {
     if (user.email != loggedUser.email) {
-        var siguiendo by remember {mutableStateOf(user.email in loggedUser.following)}
+        var siguiendo by remember { mutableStateOf(user.email in loggedUser.following) }
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .clickable {
-                    if(siguiendo){
-                        personViewModel.unfollowUser(loggedUser.email,user.email)
-                    }else{
-                        personViewModel.followUser(loggedUser.email,user.email)
+                    if (siguiendo) {
+                        personViewModel.unfollowUser(loggedUser.email, user.email)
+                    } else {
+                        personViewModel.followUser(loggedUser.email, user.email)
                     }
                     siguiendo = !siguiendo
                 }
@@ -404,7 +410,7 @@ fun PostTabView(
                 Icon(
                     painter = item.image,
                     contentDescription = item.text,
-                    tint = if(selectedTabIndex == index) Color.Black else inactiveColor,
+                    tint = if (selectedTabIndex == index) Color.Black else inactiveColor,
                     modifier = Modifier
                         .padding(10.dp)
                         .size(20.dp)
@@ -451,7 +457,7 @@ fun MostrarRutas(
     modifier: Modifier = Modifier,
     navigationController: NavHostController,
     mapViewModel: MapViewModel,
-    user:PersonDTO,
+    user: PersonDTO,
     menuViewModel: MenuViewModel
 ) {
     LazyColumn(
@@ -460,7 +466,7 @@ fun MostrarRutas(
             .fillMaxSize()
     ) {
         items(listaRutas) { ruta ->
-            MainCard(ruta, mapViewModel, navigationController,user,menuViewModel,true,
+            MainCard(ruta, mapViewModel, navigationController, user, menuViewModel, true,
                 onItemClicked = { card ->
                     menuViewModel.updateActualRoute(card)
                     navigationController.navigate(Routes.RouteDetail.route)
@@ -482,7 +488,7 @@ fun MostrarUsuarios(
             .fillMaxHeight()
     ) {
         items(users) {
-            CardUsuario(it,navigationController)
+            CardUsuario(it, navigationController)
         }
     }
 }

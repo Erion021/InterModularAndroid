@@ -11,7 +11,8 @@ class PersonDTOFactory @Inject constructor(){
         nick : String,
         following : List<String>,
         photo : String,
-        fav_routes : List<String>
+        fav_routes : List<String>,
+        description : String
     ) : PersonDTO {
         return PersonDTO(
             name = name,
@@ -21,7 +22,8 @@ class PersonDTOFactory @Inject constructor(){
             nick = nick,
             following = following,
             photo = photo,
-            fav_routes = fav_routes
+            fav_routes = fav_routes,
+            description = description
         )
     }
 }

@@ -86,7 +86,9 @@ class RegisterViewModel @Inject constructor(
                     date = dateReg.value!!,
                     nick = nick.value!!,
                     email = email.value!!,
-                    password = password.value!!
+                    password = password.value!!,
+                    description = "Agregueunadescripcion",
+                    photo = ""
                 )
                 val result = registerUseCase(userRegister)
                 if(result) {

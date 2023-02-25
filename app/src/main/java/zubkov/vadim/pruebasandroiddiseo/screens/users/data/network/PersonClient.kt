@@ -4,6 +4,7 @@ import com.google.android.gms.common.internal.safeparcel.SafeParcelable.Param
 import retrofit2.Response
 import retrofit2.http.*
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
+import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.UpdateFields
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.network.request.FollowBody
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.network.request.UnfollowBody
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.network.response.PersonResponse

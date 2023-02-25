@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,10 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import zubkov.vadim.pruebasandroiddiseo.R
 import zubkov.vadim.pruebasandroiddiseo.screens.login.ui.UserViewModel
-
-var Descripcion = ""
-var Apellido = ""
-var Nombre = ""
+import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
+import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.PersonModel
+import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.description
+import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.lastname
+import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.name
 
 @Composable
 fun EditUserScreen(navigationController: NavHostController, personViewModel: PersonViewModel,userViewModel: UserViewModel) {
@@ -71,24 +73,28 @@ fun EditUserScreen(navigationController: NavHostController, personViewModel: Per
 
 @Composable
 fun ModificarUsuario(navigationController: NavHostController,personViewModel: PersonViewModel,userViewModel: UserViewModel) {
-
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)) {
 
-        campoTextoGenerico(titulo = "Nombre", variableControl = Nombre, longitud = 20)
-        campoTextoGenerico(titulo = "Apellido", variableControl = Apellido, longitud = 30)
-        campoTextoGenerico(titulo = "Descripción", variableControl = Descripcion, longitud = 100)
+        campoTextoGenerico(titulo = "Nombre", variableControl = name, longitud = 20, personViewModel = personViewModel){
+            personViewModel.returnName(it)
+        }
+        campoTextoGenerico(titulo = "Apellido", variableControl = lastname, longitud = 30, personViewModel = personViewModel){
+            personViewModel.returnLastName(it)
+        }
+        campoTextoGenerico(titulo = "Descripción", variableControl = description, longitud = 100, personViewModel = personViewModel){
+            personViewModel.returndescription(it)
+        }
 
-        modificarDatosBoton()
+        modificarDatosBoton(navigationController,userViewModel,personViewModel)
         botonModificarContrasenya()
         botonEliminarPerfil(navigationController,personViewModel,userViewModel)
     }
 }
 
 @Composable
-fun campoTextoGenerico(titulo:String, variableControl:String,longitud:Int ,mostrarTexto:Boolean =true
-) {
+fun campoTextoGenerico(titulo:String, variableControl:String,longitud:Int ,mostrarTexto:Boolean =true,personViewModel: PersonViewModel, onTextChanged : (String) -> Unit) {
     val maxLength = longitud
     var myText by remember { mutableStateOf(variableControl) }
     var visualTransformation = VisualTransformation.None
@@ -99,6 +105,7 @@ fun campoTextoGenerico(titulo:String, variableControl:String,longitud:Int ,mostr
         TextField(
             value = myText,
             onValueChange = {
+                onTextChanged(it)
                 if (it.length <= maxLength) myText = it
             },
             modifier = Modifier.fillMaxWidth(),
@@ -124,7 +131,7 @@ fun campoTextoGenerico(titulo:String, variableControl:String,longitud:Int ,mostr
 }
 
 @Composable
-fun modificarDatosBoton() {
+fun modificarDatosBoton(navigationController: NavHostController,userViewModel: UserViewModel,personViewModel: PersonViewModel) {
 
     var showToastBoton by remember { mutableStateOf(false) }
 
@@ -135,7 +142,7 @@ fun modificarDatosBoton() {
 
     Button(
         onClick = {
-            //accion de modificar la descripción, nombre y apellido del usuario en la API
+            personViewModel.editPerson(navigationController,userViewModel)
             showToastBoton = true
         },
         modifier = Modifier
@@ -283,7 +290,6 @@ fun botonEliminarPerfil(navigationController: NavHostController,personViewModel:
     Button(
         onClick = {
             showDialog.value = true
-            personViewModel.deletePerson(userViewModel.email.value!!,navigationController)
         },
         modifier = Modifier
             .fillMaxWidth()
@@ -315,7 +321,7 @@ fun botonEliminarPerfil(navigationController: NavHostController,personViewModel:
                 Button(
                     modifier = Modifier.padding(0.dp,0.dp,55.dp,0.dp),
                     onClick = { showDialog.value = false
-                        //accion de borrar el usuario en la API
+                        personViewModel.deletePerson(userViewModel.email.value!!,navigationController)
                         showToastBoton = true
                     },
                     content = { Text("Aceptar") }

@@ -24,6 +24,7 @@ import zubkov.vadim.pruebasandroiddiseo.screens.login.ui.UserViewModel
 import zubkov.vadim.pruebasandroiddiseo.screens.models.navigation.Routes
 import zubkov.vadim.pruebasandroiddiseo.screens.users.components.Header
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
+import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.*
 import zubkov.vadim.pruebasandroiddiseo.screens.users.ui.ModificarUsuario
 import zubkov.vadim.pruebasandroiddiseo.screens.users.ui.PersonViewModel
 import java.text.SimpleDateFormat
@@ -37,6 +38,17 @@ fun ProfileDetail(navigationController: NavHostController,personViewModel: Perso
         if (user.email == personViewModel.person.value!!.first().email){
             perfilPropio = true
         }
+
+        name = user.name
+        lastname = user.lastname
+        emailCurrent = user.email
+        nick = user.nick
+        date = user.date
+        following = user.following
+        photo = user.photo
+        description = user.description
+        fav_routes = user.fav_routes
+
         Scaffold(
             topBar = {
 
@@ -87,10 +99,10 @@ fun PerfilUsuarioDetalleComp(usuario: PersonDTO,editable:Boolean,navigationContr
         Texto(usuario.lastname, " Apellidos", Icons.Default.AccountBox)
         Texto(usuario.email, " Email", Icons.Default.Email)
         Texto(usuario.date, " F.Nacimiento", Icons.Default.DateRange)
-        TextoDescripcion("No hay descripción disponible","Descripción")
+        TextoDescripcion(usuario.description,"Descripción")
         if (editable) {
             BotonEditarPerfil(text = "Editar Perfil ", icon = Icons.Default.Settings,
-                navigationController = navigationController
+                navigationController = navigationController,
             )
         }
         Spacer(modifier = Modifier.height(25.dp))
@@ -145,7 +157,7 @@ fun TextoDescripcion(valor:String,texto:String){
                 .height(0.6.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Text(
-                    color = Color.White,
+                    color = Color.Gray,
                     text = valor,
                     fontSize = 16.sp
                 )
@@ -169,7 +181,9 @@ fun BotonEditarPerfil(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .clickable {navigationController.navigate(Routes.ModifyUser.route)}
+            .clickable {
+                navigationController.navigate(Routes.ModifyUser.route)
+            }
             .width(200.dp)
             .height(50.dp)
             .background(Color.LightGray, shape = RoundedCornerShape(10.dp))

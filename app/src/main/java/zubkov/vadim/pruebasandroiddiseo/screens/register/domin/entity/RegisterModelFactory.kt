@@ -9,7 +9,9 @@ class RegisterModelFactory @Inject constructor(){
         date : String,
         nick : String,
         email: String,
-        password: String
+        password: String,
+        description : String,
+        photo : String
     ) : RegisterModel {
         return RegisterModel(
             name = name,
@@ -17,7 +19,9 @@ class RegisterModelFactory @Inject constructor(){
             date = date,
             nick = nick,
             email = email,
-            password = password
+            password = password,
+            description = description,
+            photo = photo
         )
     }
 }
