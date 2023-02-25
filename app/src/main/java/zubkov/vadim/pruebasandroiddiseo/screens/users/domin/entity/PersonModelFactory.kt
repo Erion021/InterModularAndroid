@@ -1,6 +1,8 @@
 package zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity
 
-class PersonModelFactory {
+import javax.inject.Inject
+
+class PersonModelFactory @Inject constructor(){
     operator fun invoke(
         name : String,
         lastname : String,

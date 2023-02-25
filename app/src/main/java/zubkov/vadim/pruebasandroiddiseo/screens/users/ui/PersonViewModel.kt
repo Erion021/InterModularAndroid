@@ -5,10 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import zubkov.vadim.pruebasandroiddiseo.screens.login.ui.UserViewModel
+import zubkov.vadim.pruebasandroiddiseo.screens.models.navigation.Routes
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
 import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.usecase.PersonUseCase
 import javax.inject.Inject
@@ -41,6 +43,17 @@ class PersonViewModel @Inject constructor(
             person = personUseCase(email).first()
         }
         return person
+    }
+
+    fun editPerson(){
+
+    }
+
+    fun deletePerson(email : String,navigationController: NavHostController){
+        viewModelScope.launch {
+            personUseCase.deletePerson(email)
+            navigationController.navigate(Routes.Login.route)
+        }
     }
 
     fun followUser(email:String, emailSeguir: String){

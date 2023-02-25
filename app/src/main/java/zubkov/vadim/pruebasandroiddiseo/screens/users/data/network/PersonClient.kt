@@ -2,10 +2,7 @@ package zubkov.vadim.pruebasandroiddiseo.screens.users.data.network
 
 import com.google.android.gms.common.internal.safeparcel.SafeParcelable.Param
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.network.request.FollowBody
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.network.request.UnfollowBody
@@ -30,5 +27,15 @@ interface PersonClient {
     @POST("/users/unfollow")
     suspend fun unfollowUser(
         @Body body: UnfollowBody
+    )
+
+    @DELETE("/users/{email}")
+    suspend fun deletePerson(
+        @Path("email") email : String
+    )
+
+    @PUT("/users")
+    suspend fun editPerson(
+        @Body body : PersonDTO
     )
 }

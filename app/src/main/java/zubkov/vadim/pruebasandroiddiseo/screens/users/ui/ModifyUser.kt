@@ -62,7 +62,7 @@ fun EditUserScreen(navigationController: NavHostController, personViewModel: Per
         },
 
         content = {
-            ModificarUsuario(/*navigationController*/)
+            ModificarUsuario(navigationController,personViewModel,userViewModel)
         }
     )
 
@@ -70,7 +70,7 @@ fun EditUserScreen(navigationController: NavHostController, personViewModel: Per
 }
 
 @Composable
-fun ModificarUsuario(/*navigationController: NavHostController*/) {
+fun ModificarUsuario(navigationController: NavHostController,personViewModel: PersonViewModel,userViewModel: UserViewModel) {
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -82,7 +82,7 @@ fun ModificarUsuario(/*navigationController: NavHostController*/) {
 
         modificarDatosBoton()
         botonModificarContrasenya()
-        botonEliminarPerfil()
+        botonEliminarPerfil(navigationController,personViewModel,userViewModel)
     }
 }
 
@@ -278,11 +278,12 @@ fun botonModificarContrasenya() {
 }
 
 @Composable
-fun botonEliminarPerfil() {
+fun botonEliminarPerfil(navigationController: NavHostController,personViewModel: PersonViewModel,userViewModel: UserViewModel) {
     val showDialog = remember { mutableStateOf(false) }
     Button(
         onClick = {
             showDialog.value = true
+            personViewModel.deletePerson(userViewModel.email.value!!,navigationController)
         },
         modifier = Modifier
             .fillMaxWidth()

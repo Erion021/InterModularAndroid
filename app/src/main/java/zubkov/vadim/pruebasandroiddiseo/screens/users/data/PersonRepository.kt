@@ -24,4 +24,11 @@ class PersonRepository @Inject constructor(
         return api.unfollowUser(email,emailSeguir)
     }
 
+    suspend fun editPerson(body : PersonDTO){
+        return api.editPerson(body)
+    }
+
+    suspend fun deletePerson(email : String){
+        return api.deletePerson(email)
+    }
 }

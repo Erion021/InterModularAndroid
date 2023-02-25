@@ -1,14 +1,15 @@
 package zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto
 
+import com.google.gson.annotations.SerializedName
 import zubkov.vadim.pruebasandroiddiseo.screens.menu.data.dto.MenuDTO
 
 data class PersonDTO(
-    val name : String,
-    val lastname : String,
-    val email : String,
-    val date : String,
-    val nick : String,
-    val following : List<String>,
-    val photo : String,
-    val fav_routes : List<String>
+    @SerializedName("name") val name : String,
+    @SerializedName("lastname") val lastname : String,
+    @SerializedName("email") val email : String,
+    @SerializedName("date") val date : String,
+    @SerializedName("nick") val nick : String,
+    @SerializedName("following") val following : List<String>,
+    @SerializedName("photo") val photo : String,
+    @SerializedName("fav_routes") val fav_routes : List<String>
 )

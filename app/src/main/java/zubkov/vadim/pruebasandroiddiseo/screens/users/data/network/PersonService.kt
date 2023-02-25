@@ -37,4 +37,12 @@ class PersonService @Inject constructor(
     suspend fun unfollowUser(email:String,emailSeguir:String){
         personClient.unfollowUser(UnfollowBody(email,emailSeguir))
     }
+
+    suspend fun editPerson(body : PersonDTO){
+        personClient.editPerson(body)
+    }
+
+    suspend fun deletePerson(email : String){
+        personClient.deletePerson(email)
+    }
 }
