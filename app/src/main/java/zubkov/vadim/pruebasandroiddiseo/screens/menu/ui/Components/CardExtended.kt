@@ -2,6 +2,7 @@ package zubkov.vadim.pruebasandroiddiseo.Components
 
 import android.Manifest
 import android.util.Log
+import android.widget.Space
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,6 +31,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -118,6 +124,10 @@ fun CardExtendedComp(navigationController: NavHostController,ruta:MenuDTO,menuVi
 {
     val scrollState = rememberScrollState()
     val lazyScrollState = rememberLazyListState()
+    val photos = listOf(
+        "http://10.0.2.2:8080/profilePicture/aaa@a.com.jpg",
+        "http://10.0.2.2:8080/profilePicture/defaultProfilePicture.png",
+    )
     Column(
         Modifier
             .fillMaxSize()
@@ -128,7 +138,7 @@ fun CardExtendedComp(navigationController: NavHostController,ruta:MenuDTO,menuVi
                 .weight(0.76f)
                 .verticalScroll(scrollState)
         ) {
-            Carousel(listOf(R.drawable.background,R.drawable.background,R.drawable.background))
+            Carousel(photos)
             Spacer(modifier = Modifier.height(16.dp))
             CardInfo(navigationController,ruta,menuViewModel, userViewModel, idPublication, mapViewModel)
         }
@@ -157,20 +167,22 @@ fun CardExtendedComp(navigationController: NavHostController,ruta:MenuDTO,menuVi
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalPagerApi::class)
 @Composable
-fun Carousel(imagenes:List<Int>) {
+fun Carousel(imagenes:List<String>) {
     val slideImage = remember { mutableStateOf(imagenes.get(0)) }
     val pagerState = rememberPagerState(0)
     HorizontalPager(count = imagenes.size, state = pagerState) { page ->
         when(page)  {
             else -> slideImage.value = imagenes.get(page)
         }
+        val painter = rememberAsyncImagePainter(model = imagenes.get(page))
+
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(346.dp),
-                painter = painterResource(slideImage.value),
+                painter = painter,
                 alignment = Alignment.CenterStart,
                 contentDescription = "",
                 contentScale = ContentScale.Crop
@@ -386,8 +398,16 @@ fun Title(title: String) {
 
 @Composable
 fun ImagenUsuario(navigationController: NavHostController,ruta:MenuDTO) {
+    val urlProfile = "http://10.0.2.2:8080/profilePicture/${ruta.email}.jpg"
+
+    val painterProfile = rememberAsyncImagePainter(
+        ImageRequest.Builder(LocalContext.current).data(data = urlProfile).apply(block = fun ImageRequest.Builder.() {
+            error(R.drawable.fotoperfil)
+        }).build()
+    )
+
     Image(
-        painter = painterResource(R.drawable.fotoperfil),
+        painter = painterProfile,
         contentDescription = "Imagen",
         modifier = Modifier
             .size(40.dp)
@@ -484,18 +504,34 @@ fun LoadComments(modifier: Modifier,navigationController: NavHostController, rut
     Column(
         modifier = modifier
     ){
-        cardComments(text = ruta.message, modifier = Modifier.fillMaxWidth(), navigationController,ruta)
+        cardComments(text = ruta.message, modifier = Modifier.fillMaxWidth(),ruta)
     }
 }
 
 @Composable
-fun cardComments(text : String,modifier : Modifier,navigationController : NavHostController, ruta : CommentDTO){
+fun cardComments(text : String,modifier : Modifier, comment : CommentDTO){
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(5.dp)
     ){
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp, 8.dp, 0.dp, 8.dp)) {
+            val urlProfile = "http://10.0.2.2:8080/profilePicture/${comment.email}.jpg"
+
+            val painterProfile = rememberAsyncImagePainter(
+                ImageRequest.Builder(LocalContext.current).data(data = urlProfile).apply(block = fun ImageRequest.Builder.() {
+                    error(R.drawable.fotoperfil)
+                }).build()
+            )
+            Image(
+                painter = painterProfile,
+                contentDescription = "Foto Perfil Usuario",
+                modifier = Modifier
+                    .padding(10.dp, 0.dp, 0.dp, 0.dp)
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(14.dp))
+            )
+            Spacer(Modifier.padding(start = 5.dp))
             Text(
                 text = text,
                 modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 0.dp),

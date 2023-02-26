@@ -100,6 +100,7 @@ class MapViewModel @Inject constructor(
         _selectedLatPointB.value = lat
         _selectedLngPointB.value = lng
     }
+
     @SuppressLint("MissingPermission")
     fun PruebaFuncionFor10Segundos(
         fusedLocationClient: FusedLocationProviderClient,

@@ -27,8 +27,6 @@ class UserViewModel @Inject constructor(
     private val _password = MutableLiveData<String>()
     val password: LiveData<String> = _password
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
 
     fun onLoginChanged(email: String, password: String) {
         _email.value = email
@@ -36,20 +34,16 @@ class UserViewModel @Inject constructor(
     }
 
     fun onButtonLoginPress(navigationController: NavHostController,context: Context) {
-
         if (email.value == null && password.value == null){
             Toast.makeText(context,"Debe introducir los datos", Toast.LENGTH_SHORT).show()
         } else {
             viewModelScope.launch {
-                //_isLoading.value = true
                 val usuario = userModelFactory(email.value!!,password.value!!)
                 val result = loginUseCase(usuario)
                 if(result) {
                     Log.i("Mensaje", "Inicio Sesion")
                     navigationController.navigate(route = Routes.Home.route)
                 }
-                //navigationController.navigate(route = Routes.Home.route)
-                //_isLoading.value = false
             }
         }
     }

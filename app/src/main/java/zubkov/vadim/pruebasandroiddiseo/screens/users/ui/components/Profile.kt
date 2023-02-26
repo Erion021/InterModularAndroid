@@ -25,12 +25,17 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import zubkov.vadim.pruebasandroiddiseo.R
 import zubkov.vadim.pruebasandroiddiseo.screens.login.ui.UserViewModel
 import zubkov.vadim.pruebasandroiddiseo.screens.mapscreen.ui.MapViewModel
@@ -71,7 +76,8 @@ fun Profile(
         ProfileSection(
             menuViewModel.routesListByEmail.value!!.size,
             followers.size,
-            user.following.size
+            user.following.size,
+            user = user
         )
         Spacer(modifier = Modifier.height(25.dp))
         ButtonSection(
@@ -185,7 +191,7 @@ fun Header(
 @Composable
 fun ProfileSection(
     rutas: Int, seguidores: Int, seguidos: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier, user : PersonDTO
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
@@ -198,7 +204,8 @@ fun ProfileSection(
                 image = painterResource(id = R.drawable.fotoperfil),
                 modifier = Modifier
                     .size(100.dp)
-                    .weight(3f)
+                    .weight(3f),
+                user
             )
             Spacer(modifier = Modifier.width(16.dp))
             StatSection(modifier = Modifier.weight(7f), rutas, seguidores, seguidos)
@@ -209,8 +216,32 @@ fun ProfileSection(
 @Composable
 fun RoundImage(
     image: Painter,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    user: PersonDTO
 ) {
+    val urlProfile = "http://10.0.2.2:8080/profilePicture/${user.email}.jpg"
+
+    val painterProfile = rememberAsyncImagePainter(
+        ImageRequest.Builder(LocalContext.current).data(data = urlProfile).apply(block = fun ImageRequest.Builder.() {
+            error(R.drawable.fotoperfil)
+        }).build()
+    )
+
+    Image(
+        painter = painterProfile,
+        contentDescription = "",
+        modifier = modifier
+            .aspectRatio(1f, matchHeightConstraintsFirst = true)
+            .border(
+                width = 1.dp,
+                color = Color.LightGray,
+                shape = CircleShape
+            )
+            .padding(3.dp)
+            .clip(CircleShape)
+    )
+
+    /*
     Image(
         painter = image,
         contentDescription = null,
@@ -224,6 +255,7 @@ fun RoundImage(
             .padding(3.dp)
             .clip(CircleShape)
     )
+    */
 }
 
 @Composable

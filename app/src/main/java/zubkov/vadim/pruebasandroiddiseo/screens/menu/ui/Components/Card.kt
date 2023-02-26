@@ -20,10 +20,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import kotlinx.coroutines.launch
 import zubkov.vadim.pruebasandroiddiseo.screens.mapscreen.ui.MapViewModel
 import zubkov.vadim.pruebasandroiddiseo.R
@@ -148,10 +151,19 @@ fun MainCard(ruta: MenuDTO, mapViewModel: MapViewModel,navigationController : Na
                             .padding(top = 0.dp)
                     )
                 }
+
+                val urlProfileCard = "http://10.0.2.2:8080/profilePicture/${ruta.email}.jpg"
+
+                val painterProfile = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current).data(data = urlProfileCard).apply(block = fun ImageRequest.Builder.() {
+                        error(R.drawable.fotoperfil)
+                    }).build()
+                )
+
                 Row(verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(0.dp, 10.dp, 0.dp, 0.dp)) {
                     Image(
-                        painter = painterResource(R.drawable.fotoperfil),
+                        painter = painterProfile,
                         contentDescription = "Icono del Perfil del Usuario",
                         modifier = Modifier
                             .size(48.dp)
