@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.navigation.NavHostController
@@ -42,14 +43,18 @@ fun PostRouteScreen(navigationController : NavHostController,mapViewModel: MapVi
     Scaffold(
         topBar = {
             TopAppBar(
-                backgroundColor = Color(0xFF3F826D)
+                backgroundColor = MaterialTheme.colors.primary
             ) {
                 Box(
                     Modifier
                         .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ){
-                    Text("Publicar Ruta")
+                    Text(
+                        "Publicar Ruta",
+                        style = MaterialTheme.typography.h6,
+                        fontWeight = FontWeight.Bold,
+                    )
                 }
             }
         },

@@ -3,7 +3,6 @@ package zubkov.vadim.pruebasandroiddiseo.screens.register.data.network
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import zubkov.vadim.pruebasandroiddiseo.screens.register.domin.entity.RegisterModel
-import zubkov.vadim.pruebasandroiddiseo.core.network.RetrofitHelper
 import zubkov.vadim.pruebasandroiddiseo.screens.register.data.dto.RegisterDTO
 import javax.inject.Inject
 

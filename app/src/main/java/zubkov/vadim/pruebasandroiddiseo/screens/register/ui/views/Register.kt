@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import zubkov.vadim.pruebasandroiddiseo.R
@@ -48,7 +49,7 @@ fun Main(state: MutableTransitionState<Boolean>, navigationController: NavHostCo
             contentDescription = stringResource(id = R.string.icono_descripcion),
             contentScale = ContentScale.FillBounds,
             modifier = Modifier.matchParentSize(),
-            alpha = if (isSystemInDarkTheme()) 0.5F else 0.8f
+            alpha = 0.5F
         )
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             RegisterBody(state = state,navigationController,registerViewModel)
@@ -112,7 +113,10 @@ fun Name(name:String, onTextChanged: (String) -> Unit){
             unfocusedBorderColor = Color(0xFFDAD3C8)
         ),
         shape = CircleShape,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        textStyle = TextStyle(
+            color = MaterialTheme.colors.onPrimary
+        )
     )
 }
 
@@ -132,7 +136,10 @@ fun LastName(lastName:String, onTextChanged: (String) -> Unit){
             unfocusedBorderColor = Color(0xFFDAD3C8)
         ),
         shape = CircleShape,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        textStyle = TextStyle(
+            color = MaterialTheme.colors.onPrimary
+        )
     )
 }
 
@@ -146,6 +153,9 @@ fun NextButton(navigationController: NavHostController) {
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF7B7457))
     ){
-        Text("Siguiente")
+        Text(
+            text ="Siguiente",
+            color = MaterialTheme.colors.onPrimary
+        )
     }
 }

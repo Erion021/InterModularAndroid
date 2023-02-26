@@ -57,7 +57,7 @@ fun MainLastScreen(state: MutableTransitionState<Boolean>, navigationController:
             contentDescription = stringResource(id = R.string.icono_descripcion),
             contentScale = ContentScale.FillBounds,
             modifier = Modifier.matchParentSize(),
-            alpha = if (isSystemInDarkTheme()) 0.5F else 0.8f
+            alpha = 0.5F
         )
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             RegisterLastBody(state = state,navigationController,registerViewModel)
@@ -87,8 +87,6 @@ fun RegisterLastBody(state: MutableTransitionState<Boolean>, navigationControlle
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Title()
-            Spacer(modifier = Modifier.padding(15.dp))
             Box(
                 modifier = Modifier.width(275.dp)
             ){
@@ -115,16 +113,6 @@ fun RegisterLastBody(state: MutableTransitionState<Boolean>, navigationControlle
 }
 
 @Composable
-fun Title(){
-    Text(
-        text = stringResource(id = R.string.titulo),
-        fontSize = 23.sp,
-        fontFamily = FontFamily.Default,
-        color = Color(0xFFDAD3C8)
-    )
-}
-
-@Composable
 fun Email(email:String, onTextChanged: (String) -> Unit){
     OutlinedTextField(
         value = email,
@@ -140,7 +128,10 @@ fun Email(email:String, onTextChanged: (String) -> Unit){
             unfocusedBorderColor = Color(0xFFDAD3C8)
         ),
         shape = CircleShape,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        textStyle = TextStyle(
+            color = MaterialTheme.colors.onPrimary
+        )
     )
 }
 
@@ -161,7 +152,10 @@ fun Password(password:String, onTextChanged: (String) -> Unit){
         ),
         shape = CircleShape,
         modifier = Modifier.fillMaxWidth(),
-        visualTransformation = PasswordVisualTransformation()
+        visualTransformation = PasswordVisualTransformation(),
+        textStyle = TextStyle(
+            color = MaterialTheme.colors.onPrimary
+        )
     )
 }
 
@@ -182,7 +176,10 @@ fun RepeatPassword(repeatPassword:String, onTextChanged: (String) -> Unit){
         ),
         shape = CircleShape,
         modifier = Modifier.fillMaxWidth(),
-        visualTransformation = PasswordVisualTransformation()
+        visualTransformation = PasswordVisualTransformation(),
+        textStyle = TextStyle(
+            color = MaterialTheme.colors.onPrimary
+        )
     )
 }
 
@@ -229,7 +226,10 @@ fun ButtonRegister(navigationController: NavHostController,registerViewModel: Re
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF7B7457))
     ){
-        Text("Registrarse")
+        Text(
+            text = "Registrarse",
+            color = MaterialTheme.colors.onPrimary
+        )
     }
 }
 

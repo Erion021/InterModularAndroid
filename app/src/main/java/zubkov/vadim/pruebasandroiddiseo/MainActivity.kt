@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
             PruebasAndroidDiseñoTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = MaterialTheme.colors.onSurface
                 ) {
                     CustomNavigator(userViewModel,mapViewModel,registerViewModel,menuViewModel,personViewModel)
                 }

@@ -59,7 +59,7 @@ fun MainScreen(state: MutableTransitionState<Boolean>, navigationController: Nav
             contentDescription = stringResource(id = R.string.icono_descripcion),
             contentScale = ContentScale.FillBounds,
             modifier = Modifier.matchParentSize(),
-            alpha = if (isSystemInDarkTheme()) 0.5F else 0.8f
+            alpha = 0.5F
         )
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             MainLogin(state = state,navigationController,userViewModel)
@@ -95,8 +95,6 @@ fun MainLogin(state: MutableTransitionState<Boolean>, navigationController: NavH
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image()
-            Spacer(modifier = Modifier.padding(5.dp))
-            Title()
             Spacer(modifier = Modifier.padding(15.dp))
             Box(
                 modifier = Modifier.width(275.dp)
@@ -136,16 +134,6 @@ fun Image(){
 }
 
 @Composable
-fun Title(){
-    Text(
-        text = stringResource(id = R.string.titulo),
-        fontSize = 23.sp,
-        fontFamily = FontFamily.Default,
-        color = Color(0xFFDAD3C8)
-    )
-}
-
-@Composable
 fun Email(email:String, onTextChanged: (String) -> Unit){
     OutlinedTextField(
         value = email,
@@ -154,14 +142,17 @@ fun Email(email:String, onTextChanged: (String) -> Unit){
         },
         placeholder = { Text(
             text = "Email",
-            color = Color(0xFFDAD3C8)
+            color = MaterialTheme.colors.onPrimary
         ) },
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color(0xFFDAD3C8),
-            unfocusedBorderColor = Color(0xFFDAD3C8)
+            focusedBorderColor = MaterialTheme.colors.onPrimary,
+            unfocusedBorderColor = MaterialTheme.colors.onPrimary
         ),
         shape = CircleShape,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        textStyle = TextStyle(
+            color = MaterialTheme.colors.onPrimary
+        )
     )
 }
 
@@ -174,15 +165,18 @@ fun Password(contrasenya:String, onTextChanged: (String) -> Unit){
         },
         placeholder = { Text(
             text = "Contraseña",
-            color = Color(0xFFDAD3C8)
+            color = MaterialTheme.colors.onPrimary
         ) },
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color(0xFFDAD3C8),
-            unfocusedBorderColor = Color(0xFFDAD3C8)
+            focusedBorderColor = MaterialTheme.colors.onPrimary,
+            unfocusedBorderColor = MaterialTheme.colors.onPrimary
         ),
         shape = CircleShape,
         modifier = Modifier.fillMaxWidth(),
-        visualTransformation = PasswordVisualTransformation()
+        visualTransformation = PasswordVisualTransformation(),
+        textStyle = TextStyle(
+            color = MaterialTheme.colors.onPrimary
+        )
     )
 }
 
@@ -196,9 +190,12 @@ fun ButtonLogin(navigationController: NavHostController,userViewModel: UserViewM
         },
         shape = CircleShape,
         modifier = Modifier.fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF7B7457))
+        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.onSecondary)
     ){
-        Text("Login")
+        Text(
+            text = "Login",
+            color = MaterialTheme.colors.onPrimary
+        )
     }
 }
 
@@ -208,73 +205,13 @@ fun ClickableText(navigationController: NavHostController){
         verticalAlignment = Alignment.CenterVertically
     ){
         ClickableText(
-            text = AnnotatedString("Contraseña Olvidada"),
-            onClick = {
-            },
-            style = TextStyle(
-                color = Color(0xFFDAD3C8)
-            )
-        )
-        Text(
-            text = " | ",
-            color = Color(0xFFDAD3C8)
-        )
-        ClickableText(
             text = AnnotatedString("Registrarse"),
             onClick = {
                 navigationController.navigate(Routes.Register.route)
             },
             style = TextStyle(
-                color = Color(0xFFDAD3C8)
+                color = MaterialTheme.colors.onPrimary
             )
         )
-    }
-}
-
-@Composable
-fun PopUpBox(){
-    val openDialog = remember { mutableStateOf(false) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Box {
-            val popupWidth = 300.dp
-            val popupHeight = 100.dp
-
-            if (openDialog.value) {
-                Popup(
-                    alignment = Alignment.TopCenter,
-                    properties = PopupProperties()
-                ) {
-                    Box(
-                        Modifier
-                            .size(popupWidth, popupHeight)
-                            .padding(top = 5.dp)
-                            .background(Color.Green, RoundedCornerShape(10.dp))
-                            .border(1.dp, color = Color.Black, RoundedCornerShape(10.dp))
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 20.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Welcome to Geeks for Geeks",
-                                color = Color.White,
-                                modifier = Modifier.padding(vertical = 5.dp),
-                                fontSize = 16.sp
-                            )
-                        }
-                    }
-                }
-            }
-        }
     }
 }

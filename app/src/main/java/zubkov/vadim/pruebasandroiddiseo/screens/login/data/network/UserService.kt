@@ -4,7 +4,6 @@ import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import zubkov.vadim.pruebasandroiddiseo.screens.login.data.dto.UserDTO
-import zubkov.vadim.pruebasandroiddiseo.core.network.RetrofitHelper
 import zubkov.vadim.pruebasandroiddiseo.dependecyinjection.Token
 import javax.inject.Inject
 
