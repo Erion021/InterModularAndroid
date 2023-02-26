@@ -108,7 +108,7 @@ fun MainCard(ruta: MenuDTO, mapViewModel: MapViewModel,navigationController : Na
                     modifier = Modifier.padding(bottom = 5.dp)
                 )
                 Text(
-                    text = "${ruta.distance} km",
+                    text = "${ruta.distance} m",
                     fontSize = 16.sp,
                     modifier = Modifier.padding(bottom = 15.dp)
                 )

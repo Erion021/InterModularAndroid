@@ -131,8 +131,7 @@ class MapViewModel @Inject constructor(
     }
 
     private fun getDistance(): Double {
-        val distanceInMeters = SphericalUtil.computeLength(arrayMoves)
-        return distanceInMeters / 1000
+        return SphericalUtil.computeLength(arrayMoves)
     }
 
     private fun durationSave(durationSave : Long) {
