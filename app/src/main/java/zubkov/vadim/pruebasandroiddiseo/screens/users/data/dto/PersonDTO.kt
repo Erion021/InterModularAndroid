@@ -12,12 +12,6 @@ data class PersonDTO(
     @SerializedName("following") val following : List<String>,
     @SerializedName("photo") val photo : String,
     @SerializedName("fav_routes") val fav_routes : List<String>,
-    @SerializedName("description") val description : String
-)
-
-data class UpdateFields(
-    @SerializedName("name") val name : String,
-    @SerializedName("lastname") val lastname : String,
-    @SerializedName("email") val email : String,
-    @SerializedName("description") val description : String
+    @SerializedName("description") val description : String,
+    @SerializedName("password") val password : String
 )

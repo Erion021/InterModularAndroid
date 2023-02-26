@@ -1,5 +1,6 @@
 package zubkov.vadim.pruebasandroiddiseo.screens.users.ui
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,11 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import zubkov.vadim.pruebasandroiddiseo.R
 import zubkov.vadim.pruebasandroiddiseo.screens.login.ui.UserViewModel
-import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
-import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.PersonModel
-import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.description
-import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.lastname
-import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.name
+import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.descriptionOld
+import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.lastnameOld
+import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.nameOld
 
 @Composable
 fun EditUserScreen(navigationController: NavHostController, personViewModel: PersonViewModel,userViewModel: UserViewModel) {
@@ -77,18 +75,44 @@ fun ModificarUsuario(navigationController: NavHostController,personViewModel: Pe
         .fillMaxSize()
         .padding(16.dp)) {
 
-        campoTextoGenerico(titulo = "Nombre", variableControl = name, longitud = 20, personViewModel = personViewModel){
+        var Name by remember {
+            mutableStateOf("")
+        }
+
+        var LastName by remember {
+            mutableStateOf("")
+        }
+
+
+        var Description by remember {
+            mutableStateOf("")
+        }
+
+        if (Name.isEmpty()){
+            Log.d("LOGJNAME", nameOld)
+            personViewModel.returnName(nameOld)
+        }
+
+        if (LastName.isEmpty()){
+            personViewModel.returnLastName(lastnameOld)
+        }
+
+        if (Description.isEmpty()){
+            personViewModel.returndescription(descriptionOld)
+        }
+
+        campoTextoGenerico(titulo = "Nombre", variableControl = Name, longitud = 20, personViewModel = personViewModel){
             personViewModel.returnName(it)
         }
-        campoTextoGenerico(titulo = "Apellido", variableControl = lastname, longitud = 30, personViewModel = personViewModel){
+        campoTextoGenerico(titulo = "Apellido", variableControl = LastName, longitud = 30, personViewModel = personViewModel){
             personViewModel.returnLastName(it)
         }
-        campoTextoGenerico(titulo = "Descripción", variableControl = description, longitud = 100, personViewModel = personViewModel){
+        campoTextoGenerico(titulo = "Descripción", variableControl = Description, longitud = 100, personViewModel = personViewModel){
             personViewModel.returndescription(it)
         }
 
         modificarDatosBoton(navigationController,userViewModel,personViewModel)
-        botonModificarContrasenya()
+        botonModificarContrasenya(navigationController,personViewModel,userViewModel)
         botonEliminarPerfil(navigationController,personViewModel,userViewModel)
     }
 }
@@ -156,7 +180,7 @@ fun modificarDatosBoton(navigationController: NavHostController,userViewModel: U
 
 
 @Composable
-fun TextFieldContrasenyaConIcono(textoDefecto : String, textoEjemplo : String = "", backgroundColor : Color = Color.LightGray, icono: ImageVector){
+fun TextFieldContrasenyaConIcono(textoDefecto : String, textoEjemplo : String = "", backgroundColor : Color = Color.LightGray, icono: ImageVector,personViewModel: PersonViewModel){
     var password by rememberSaveable { mutableStateOf("") }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
@@ -171,7 +195,53 @@ fun TextFieldContrasenyaConIcono(textoDefecto : String, textoEjemplo : String = 
     ) {
         TextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = {
+                password = it
+                personViewModel.returnPassword(it)
+            },
+            label = { Text(textoEjemplo) },
+            singleLine = true,
+            placeholder = { Text(textoDefecto) } ,
+
+
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            trailingIcon = {
+                val image = if (passwordVisible)
+                    IconoOjo()
+                else IconoOjoTachado()
+
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {}
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = MaterialTheme.colors.background,
+                focusedIndicatorColor = MaterialTheme.colors.primary,
+                focusedLabelColor = Color.Black
+            ),
+        )
+    }
+}
+
+@Composable
+fun TextFieldContrasenyaRepetirConIcono(textoDefecto : String, textoEjemplo : String = "", backgroundColor : Color = Color.LightGray, icono: ImageVector,personViewModel: PersonViewModel){
+    var passwordRepetir by rememberSaveable { mutableStateOf("") }
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
+
+    Row(modifier = Modifier
+        .height(65.dp)
+        .fillMaxWidth()
+        .background(MaterialTheme.colors.background)
+        .padding(0.dp, 0.dp),
+
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TextField(
+            value = passwordRepetir,
+            onValueChange = {
+                passwordRepetir = it
+                personViewModel.returnPasswordRepeat(it)
+            },
             label = { Text(textoEjemplo) },
             singleLine = true,
             placeholder = { Text(textoDefecto) } ,
@@ -228,8 +298,8 @@ private fun IconoOjoTachado()
 }
 
 @Composable
-fun botonModificarContrasenya() {
-
+fun botonModificarContrasenya(navigationController: NavHostController,personViewModel: PersonViewModel,userViewModel: UserViewModel) {
+    val context = LocalContext.current
     val showDialog = remember { mutableStateOf(false) }
     Button(
         onClick = {
@@ -249,11 +319,13 @@ fun botonModificarContrasenya() {
                 Column(){
                     TextFieldContrasenyaConIcono(
                         textoDefecto = "Introducir la Contraseña",
-                        icono = Icons.Default.Lock
+                        icono = Icons.Default.Lock,
+                        personViewModel = personViewModel
                     )
-                    TextFieldContrasenyaConIcono(
+                    TextFieldContrasenyaRepetirConIcono(
                         textoDefecto = "Repetir la Contraseña",
-                        icono = Icons.Default.Lock
+                        icono = Icons.Default.Lock,
+                        personViewModel = personViewModel
                     )
                 }
             },
@@ -268,7 +340,7 @@ fun botonModificarContrasenya() {
 
                 Button(
                     onClick = { showDialog.value = false
-                        //accion de modificar contraseña del usuario en la API
+                        personViewModel.editPassword(navigationController,userViewModel,context)
                         showToastBoton = true
                     },
                     content = { Text("Modificar contraseña") }

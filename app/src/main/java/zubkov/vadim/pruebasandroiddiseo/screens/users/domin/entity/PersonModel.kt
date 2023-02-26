@@ -9,15 +9,17 @@ data class PersonModel(
     val following : List<String>,
     val photo : String,
     val description : String,
-    val fav_routes: List<String>
+    val fav_routes: List<String>,
+    val password : String
 )
 
-var name = ""
-var lastname = ""
+var nameOld = ""
+var lastnameOld = ""
 var emailCurrent = ""
 var nick = ""
 var date = ""
 var following = listOf("")
 var photo = ""
-var description = ""
+var descriptionOld = ""
 var fav_routes = listOf("")
+var passwordOld = ""

@@ -1,6 +1,8 @@
 package zubkov.vadim.pruebasandroiddiseo.screens.users.ui
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.ui.graphics.vector.EmptyPath
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,10 +12,10 @@ import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.mindrot.jbcrypt.BCrypt
 import zubkov.vadim.pruebasandroiddiseo.screens.login.ui.UserViewModel
 import zubkov.vadim.pruebasandroiddiseo.screens.models.navigation.Routes
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
-import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.UpdateFields
 import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.*
 import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.usecase.PersonUseCase
 import javax.inject.Inject
@@ -35,6 +37,12 @@ class PersonViewModel @Inject constructor(
     private var _description = MutableLiveData<String>()
     var description : LiveData<String> = _description
 
+    private var _password = MutableLiveData<String>()
+    var password : LiveData<String> = _password
+
+    private var _passwordRepeat = MutableLiveData<String>()
+    var passwordRepeat : LiveData<String> = _passwordRepeat
+
     fun changeList(){
         person = _Person
     }
@@ -51,14 +59,18 @@ class PersonViewModel @Inject constructor(
         _description.value = description
     }
 
+    fun returnPassword(password : String){
+        _password.value = password
+    }
+
+    fun returnPasswordRepeat(passwordRepeat : String){
+        _passwordRepeat.value = passwordRepeat
+    }
+
     fun returnPerson(userViewModel: UserViewModel){
-        Log.d("Hola","Entro en return")
         viewModelScope.launch {
-            Log.d("Hola 1","Antes del Person")
             _Person = MutableLiveData(personUseCase("${userViewModel.email.value}"))
-            Log.d("Hola 2","Despues del Person")
             changeList()
-            Log.d("Hola 3","Final del Person")
         }
     }
 
@@ -72,7 +84,7 @@ class PersonViewModel @Inject constructor(
 
     fun editPerson(navigationController: NavHostController,userViewModel: UserViewModel){
         viewModelScope.launch {
-            val body = PersonModel(
+            val body = personModelFactory(
                 name = name.value!!,
                 lastname = lastName.value!!,
                 description = description.value!!,
@@ -81,10 +93,36 @@ class PersonViewModel @Inject constructor(
                 following = following,
                 fav_routes = fav_routes,
                 nick = nick,
-                date = date
+                date = date,
+                password = passwordOld
             )
+
             personUseCase.editPerson(body)
             navigationController.navigate(Routes.Home.route)
+        }
+    }
+
+    fun editPassword(navigationController: NavHostController,userViewModel: UserViewModel,context : Context){
+        viewModelScope.launch {
+            if (password.value!!.compareTo(passwordRepeat.value!!) == 0){
+                val hashedPassword = BCrypt.hashpw(password.value!!, BCrypt.gensalt(10))
+                val body = personModelFactory(
+                    name = nameOld,
+                    lastname = lastnameOld,
+                    description = descriptionOld,
+                    email = userViewModel.email.value!!,
+                    photo = photo,
+                    following = following,
+                    fav_routes = fav_routes,
+                    nick = nick,
+                    date = date,
+                    password = hashedPassword
+                )
+                personUseCase.editPassword(body)
+                navigationController.navigate(Routes.Home.route)
+            } else {
+                Toast.makeText(context,"Las contraseñeas deben coincidir", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

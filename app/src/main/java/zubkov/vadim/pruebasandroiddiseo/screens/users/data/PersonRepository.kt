@@ -1,7 +1,6 @@
 package zubkov.vadim.pruebasandroiddiseo.screens.users.data
 
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
-import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.UpdateFields
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.network.PersonService
 import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.PersonModel
 import javax.inject.Inject
@@ -27,6 +26,10 @@ class PersonRepository @Inject constructor(
 
     suspend fun editPerson(body : PersonDTO){
         return api.editPerson(body)
+    }
+
+    suspend fun editPassword(body : PersonDTO){
+        return api.editPassword(body)
     }
 
     suspend fun deletePerson(email : String){

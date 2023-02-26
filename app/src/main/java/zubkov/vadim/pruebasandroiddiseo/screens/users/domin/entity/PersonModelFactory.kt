@@ -12,7 +12,8 @@ class PersonModelFactory @Inject constructor(){
         following : List<String>,
         photo : String,
         description : String,
-        fav_routes : List<String>
+        fav_routes : List<String>,
+        password : String
     ) : PersonModel {
         return PersonModel(
             name = name,
@@ -23,7 +24,8 @@ class PersonModelFactory @Inject constructor(){
             following = following,
             photo = photo,
             description = description,
-            fav_routes = fav_routes
+            fav_routes = fav_routes,
+            password = password
         )
     }
 }

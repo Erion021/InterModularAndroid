@@ -1,5 +1,6 @@
 package zubkov.vadim.pruebasandroiddiseo.screens.users
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -22,12 +23,9 @@ import androidx.navigation.NavHostController
 import zubkov.vadim.pruebasandroiddiseo.R
 import zubkov.vadim.pruebasandroiddiseo.screens.login.ui.UserViewModel
 import zubkov.vadim.pruebasandroiddiseo.screens.models.navigation.Routes
-import zubkov.vadim.pruebasandroiddiseo.screens.users.components.Header
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
 import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.*
-import zubkov.vadim.pruebasandroiddiseo.screens.users.ui.ModificarUsuario
 import zubkov.vadim.pruebasandroiddiseo.screens.users.ui.PersonViewModel
-import java.text.SimpleDateFormat
 
 @Composable
 fun ProfileDetail(navigationController: NavHostController,personViewModel: PersonViewModel,userViewModel: UserViewModel,email:String){
@@ -39,15 +37,17 @@ fun ProfileDetail(navigationController: NavHostController,personViewModel: Perso
             perfilPropio = true
         }
 
-        name = user.name
-        lastname = user.lastname
+        nameOld = user.name
+        lastnameOld = user.lastname
         emailCurrent = user.email
         nick = user.nick
         date = user.date
         following = user.following
         photo = user.photo
-        description = user.description
+        descriptionOld = user.description
         fav_routes = user.fav_routes
+        passwordOld = user.password
+        Log.d("Password",user.password)
 
         Scaffold(
             topBar = {

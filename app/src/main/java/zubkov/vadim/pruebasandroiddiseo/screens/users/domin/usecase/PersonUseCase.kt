@@ -2,7 +2,6 @@ package zubkov.vadim.pruebasandroiddiseo.screens.users.domin.usecase
 
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.PersonRepository
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
-import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.UpdateFields
 import zubkov.vadim.pruebasandroiddiseo.screens.users.domin.entity.PersonModel
 import javax.inject.Inject
 
@@ -42,7 +41,25 @@ class PersonUseCase @Inject constructor(
                 description = body.description,
                 date = body.date,
                 nick = body.nick,
-                fav_routes = body.fav_routes
+                fav_routes = body.fav_routes,
+                password = body.password
+            )
+        )
+    }
+
+    suspend fun editPassword(body : PersonModel){
+        repository.editPassword(
+            body = PersonDTO(
+                name = body.name,
+                lastname = body.lastname,
+                email = body.email,
+                photo = body.photo,
+                following = body.following,
+                description = body.description,
+                date = body.date,
+                nick = body.nick,
+                fav_routes = body.fav_routes,
+                password = body.password
             )
         )
     }

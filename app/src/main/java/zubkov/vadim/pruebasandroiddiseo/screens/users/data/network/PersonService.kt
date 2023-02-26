@@ -4,7 +4,6 @@ import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
-import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.UpdateFields
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.network.request.FollowBody
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.network.request.UnfollowBody
 import javax.inject.Inject
@@ -41,6 +40,10 @@ class PersonService @Inject constructor(
 
     suspend fun editPerson(body : PersonDTO){
         personClient.editPerson(body)
+    }
+
+    suspend fun editPassword(body : PersonDTO){
+        personClient.editPassword(body)
     }
 
     suspend fun deletePerson(email : String){
