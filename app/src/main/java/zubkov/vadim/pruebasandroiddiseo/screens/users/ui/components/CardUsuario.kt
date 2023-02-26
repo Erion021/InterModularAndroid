@@ -10,9 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import zubkov.vadim.pruebasandroiddiseo.R
 import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
 
@@ -33,8 +36,16 @@ fun CardUsuario(emailUser: String, navigationController:NavHostController) {
             modifier = Modifier.padding(9.dp)
 
         ) {
+            val urlProfile = "http://10.0.2.2:8080/profilePicture/${emailUser}.jpg"
+
+            val painterProfile = rememberAsyncImagePainter(
+                ImageRequest.Builder(LocalContext.current).data(data = urlProfile).apply(block = fun ImageRequest.Builder.() {
+                    error(R.drawable.fotoperfil)
+                }).build()
+            )
+
             Image(
-                painter = painterResource(R.drawable.fotoperfil),
+                painter = painterProfile,
                 contentDescription = "Foto Perfil Usuario",
                 modifier = Modifier
                     .padding(10.dp,0.dp,0.dp,0.dp)

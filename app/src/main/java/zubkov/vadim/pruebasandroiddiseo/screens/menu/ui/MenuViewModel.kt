@@ -85,7 +85,7 @@ class MenuViewModel @Inject constructor(
                 id_publication = idPublication,
                 email = userViewModel.email.value!!,
                 message = message.value!!,
-                date = "adat"
+                date = "${getTime()}"
             )
             val result = commentUseCase.postComment(comment)
             if (result){

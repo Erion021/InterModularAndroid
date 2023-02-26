@@ -144,7 +144,9 @@ fun CardExtendedComp(navigationController: NavHostController,ruta:MenuDTO,menuVi
         }
         Spacer(modifier = Modifier.height(10.dp))
         LazyColumn(
-            modifier = Modifier.weight(0.2f),
+            modifier = Modifier
+                .weight(0.2f)
+                .fillMaxSize(),
             state = lazyScrollState
         ) {
             if (menuViewModel.commentList.value!!.isEmpty()){
@@ -459,7 +461,6 @@ fun CommentsSection(navigationController: NavHostController,comment : CommentDTO
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp)
     ) {
         LoadComments(Modifier
             .fillMaxWidth(),
@@ -503,13 +504,15 @@ fun PostComment(modifier : Modifier, menuViewModel: MenuViewModel, userViewModel
 fun LoadComments(modifier: Modifier,navigationController: NavHostController, ruta : CommentDTO){
     Column(
         modifier = modifier
+            .background(MaterialTheme.colors.primaryVariant)
+            .fillMaxWidth()
     ){
-        cardComments(text = ruta.message, modifier = Modifier.fillMaxWidth(),ruta)
+        cardComments(text = ruta.message, modifier = Modifier.fillMaxWidth(),ruta,navigationController)
     }
 }
 
 @Composable
-fun cardComments(text : String,modifier : Modifier, comment : CommentDTO){
+fun cardComments(text : String,modifier : Modifier, comment : CommentDTO,navigationController: NavHostController){
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -523,14 +526,25 @@ fun cardComments(text : String,modifier : Modifier, comment : CommentDTO){
                     error(R.drawable.fotoperfil)
                 }).build()
             )
-            Image(
-                painter = painterProfile,
-                contentDescription = "Foto Perfil Usuario",
-                modifier = Modifier
-                    .padding(10.dp, 0.dp, 0.dp, 0.dp)
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(14.dp))
-            )
+            Column(
+                verticalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterProfile,
+                    contentDescription = "Foto Perfil Usuario",
+                    modifier = Modifier
+                        .padding(10.dp, 0.dp, 0.dp, 0.dp)
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .clickable { navigationController.navigate("extUsers/${comment.email}") }
+                )
+                Text(
+                    text = comment.date,
+                    color = Color.Black,
+                    style = MaterialTheme.typography.caption,
+                )
+            }
+
             Spacer(Modifier.padding(start = 5.dp))
             Text(
                 text = text,
