@@ -317,7 +317,7 @@ fun BottomCard(ruta:MenuDTO,menuViewModel: MenuViewModel,userViewModel: UserView
             .padding(16.dp, 0.dp, 16.dp, 0.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        MiniInfoCard(title = "Distancia", value = "${ruta.distance} km")
+        MiniInfoCard(title = "Distancia", value = "${ruta.distance} m")
         MiniInfoCard(title = "Dificultad", value = ruta.difficulty)
         MiniInfoCard(title = "Actividad", value = ruta.category)
     }

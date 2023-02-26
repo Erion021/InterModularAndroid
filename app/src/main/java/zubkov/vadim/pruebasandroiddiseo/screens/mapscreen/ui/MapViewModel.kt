@@ -21,7 +21,6 @@ import zubkov.vadim.pruebasandroiddiseo.screens.login.ui.UserViewModel
 import zubkov.vadim.pruebasandroiddiseo.screens.mapscreen.domin.usecase.MapUseCase
 import zubkov.vadim.pruebasandroiddiseo.screens.menu.domin.entity.MenuModelFactory
 import zubkov.vadim.pruebasandroiddiseo.screens.models.navigation.Routes
-import zubkov.vadim.pruebasandroiddiseo.screens.users.ui.PersonViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -102,7 +101,7 @@ class MapViewModel @Inject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    fun PruebaFuncionFor10Segundos(
+    fun RouteRecord(
         fusedLocationClient: FusedLocationProviderClient,
     ){
         viewModelScope.launch {

@@ -44,6 +44,7 @@ fun Buscador(filter: FilterViewModel){
 }
 
 fun Filtrar(filter:FilterViewModel){
+    filter.updateMostrarFiltro(false)
 
     var listRutasMostrar = filter.listadoBase.value!!
     //Buscador
@@ -183,7 +184,7 @@ fun FiltroTexto(filter:FilterViewModel){
                     contentDescription = "Search Icon",
                     tint = MaterialTheme.colors.secondary,
 
-                )
+                    )
             }
         },
     )
@@ -193,7 +194,7 @@ fun FiltroTexto(filter:FilterViewModel){
 @Composable
 fun Filtros(filter: FilterViewModel)
 {
-    var mostrarFiltro by remember{ mutableStateOf(false) }
+    val mostrarFiltro by filter.mostrarFiltro.observeAsState(initial = filter.mostrarFiltro.value)
     var color by remember{ mutableStateOf(Color.LightGray)}
     val counter by filter.countListado.observeAsState(initial = filter.countListado.value)
 
@@ -215,13 +216,13 @@ fun Filtros(filter: FilterViewModel)
                         .clip(shape = RoundedCornerShape(18.dp))
                         .background(MaterialTheme.colors.secondary)
                         .clickable {
-                            if (mostrarFiltro) {
-                                mostrarFiltro = false
+                            if (mostrarFiltro == true) {
+                                filter.updateMostrarFiltro(false)
                                 color = Color.LightGray
                                 Filtrar(filter)
                             } else {
                                 color = Color(0xFFCdca28)
-                                mostrarFiltro = true
+                                filter.updateMostrarFiltro(true)
                             }
                         }
                 ) {
@@ -240,7 +241,7 @@ fun Filtros(filter: FilterViewModel)
             Text("Resultados: $counter")
             SwitchBusqueda(filter)
         }
-        if (mostrarFiltro) {
+        if (mostrarFiltro == true) {
             Separador()
             Column(
                 modifier = Modifier

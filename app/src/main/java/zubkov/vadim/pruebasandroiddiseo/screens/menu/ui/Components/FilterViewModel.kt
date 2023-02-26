@@ -84,4 +84,9 @@ class FilterViewModel:ViewModel() {
         return _filtroActividades.value!!.contains(activity)
     }
 
+    private val _mostrarFiltro = MutableLiveData<Boolean>()
+    var mostrarFiltro: LiveData<Boolean> = _mostrarFiltro
+    fun updateMostrarFiltro(value:Boolean) {
+        _mostrarFiltro.value = value
+    }
 }

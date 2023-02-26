@@ -5,23 +5,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
-import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -31,14 +22,10 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.compose.*
-import kotlinx.coroutines.coroutineScope
-import zubkov.vadim.pruebasandroiddiseo.screens.login.ui.UserViewModel
 import zubkov.vadim.pruebasandroiddiseo.screens.mapscreen.ui.MapViewModel
 import zubkov.vadim.pruebasandroiddiseo.screens.models.BottomBarContent
 import zubkov.vadim.pruebasandroiddiseo.screens.models.TopBarContent
 import zubkov.vadim.pruebasandroiddiseo.screens.models.navigation.Routes
-import zubkov.vadim.pruebasandroiddiseo.screens.users.data.dto.PersonDTO
-import zubkov.vadim.pruebasandroiddiseo.screens.users.ui.PersonViewModel
 import javax.inject.Singleton
 
 @Singleton
@@ -84,7 +71,7 @@ fun MapaGoogle(navigationController: NavHostController, mapViewModel: MapViewMod
                                     Log.d("Lng A","${location.longitude}")
                                     mapViewModel.RecA(location.latitude,location.longitude)
                                     mapViewModel.arrayMoves.add(LatLng(location.latitude,location.longitude))
-                                    mapViewModel.PruebaFuncionFor10Segundos(fusedLocationClient)
+                                    mapViewModel.RouteRecord(fusedLocationClient)
                                     navigationController.navigate(Routes.GmapView.route)
                                 }
                             }
