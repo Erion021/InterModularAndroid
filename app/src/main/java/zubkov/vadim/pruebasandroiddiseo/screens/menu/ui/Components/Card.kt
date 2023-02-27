@@ -142,8 +142,17 @@ fun MainCard(ruta: MenuDTO, mapViewModel: MapViewModel,navigationController : Na
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(0.dp,30.dp,0.dp,0.dp)) {
+
+                    val urlRouteCard = "http://10.0.2.2:8080/publicationPicture/${ruta._id}/${ruta._id}_0.png"
+
+                    val painterProfile = rememberAsyncImagePainter(
+                        ImageRequest.Builder(LocalContext.current).data(data = urlRouteCard).apply(block = fun ImageRequest.Builder.() {
+                            error(R.drawable.background)
+                        }).build()
+                    )
+
                     Image(
-                        painter = painterResource(R.drawable.background),
+                        painter = painterProfile,
                         contentDescription = "Primera Imagen de la Ruta",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier

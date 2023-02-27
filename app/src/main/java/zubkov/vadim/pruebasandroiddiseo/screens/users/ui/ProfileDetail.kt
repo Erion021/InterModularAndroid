@@ -15,11 +15,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import zubkov.vadim.pruebasandroiddiseo.R
 import zubkov.vadim.pruebasandroiddiseo.screens.login.ui.UserViewModel
 import zubkov.vadim.pruebasandroiddiseo.screens.models.navigation.Routes
@@ -93,8 +96,15 @@ fun PerfilUsuarioDetalleComp(usuario: PersonDTO,editable:Boolean,navigationContr
             .border(border = BorderStroke(0.3.dp, Color.Black))
             .verticalScroll(rememberScrollState()))
     {
+        val urlProfile = "http://10.0.2.2:8080/profilePicture/${usuario.email}.jpg"
+
+        val painterProfile = rememberAsyncImagePainter(
+            ImageRequest.Builder(LocalContext.current).data(data = urlProfile).apply(block = fun ImageRequest.Builder.() {
+                error(R.drawable.fotoperfil)
+            }).build()
+        )
         Spacer(modifier = Modifier.height(25.dp))
-        ImagenRedonda(R.drawable.fotoperfil)
+        ImagenRedonda(painterProfile)
         Texto(usuario.name, " Nombre")
         Texto(usuario.lastname, " Apellidos", Icons.Default.AccountBox)
         Texto(usuario.email, " Email", Icons.Default.Email)
@@ -225,9 +235,9 @@ fun Separador(){
 
 
 @Composable
-fun ImagenRedonda(idFoto:Int) {
+fun ImagenRedonda(painterProfile: AsyncImagePainter) {
     Image(
-        painter = painterResource(idFoto),
+        painter = painterProfile,
         contentDescription = "Imagen",
         modifier = Modifier
             .size(150.dp)

@@ -33,6 +33,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
@@ -126,9 +127,12 @@ fun CardExtendedComp(navigationController: NavHostController,ruta:MenuDTO,menuVi
     val scrollState = rememberScrollState()
     val lazyScrollState = rememberLazyListState()
     val photos = listOf(
-        "http://10.0.2.2:8080/profilePicture/aaa@a.com.jpg",
-        "http://10.0.2.2:8080/profilePicture/defaultProfilePicture.png",
+        "http://10.0.2.2:8080/publicationPicture/${ruta._id}/${ruta._id}_0.jpg",
+        "http://10.0.2.2:8080/publicationPicture/${ruta._id}/${ruta._id}_1.jpg",
+        "http://10.0.2.2:8080/publicationPicture/${ruta._id}/${ruta._id}_2.jpg",
+        "http://10.0.2.2:8080/publicationPicture/${ruta._id}/${ruta._id}_3.jpg"
     )
+
     Column(
         Modifier
             .fillMaxSize()
