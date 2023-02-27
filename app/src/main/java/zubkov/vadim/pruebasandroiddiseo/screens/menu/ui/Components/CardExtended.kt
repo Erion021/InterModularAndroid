@@ -189,8 +189,11 @@ fun Carousel(imagenes:List<String>) {
         when(page)  {
             else -> slideImage.value = imagenes.get(page)
         }
-        val painter = rememberAsyncImagePainter(model = imagenes.get(page))
-
+        val painter = rememberAsyncImagePainter(
+            ImageRequest.Builder(LocalContext.current).data(data = imagenes.get(page)).apply(block = fun ImageRequest.Builder.() {
+                error(R.drawable.background)
+            }).build()
+        )
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
@@ -339,7 +342,7 @@ fun BottomCard(ruta:MenuDTO,menuViewModel: MenuViewModel,userViewModel: UserView
         Column() {
             MiniInfoCard(title = "Actividad", value = ruta.category)
             Spacer(modifier = Modifier.padding(10.dp))
-            MiniInfoCard(title = "Duracion", value = "${ruta.duration}")
+            MiniInfoCard(title = "Duracion", value = "${ruta.duration} mins")
         }
     }
     Spacer(modifier = Modifier.height(16.dp))
