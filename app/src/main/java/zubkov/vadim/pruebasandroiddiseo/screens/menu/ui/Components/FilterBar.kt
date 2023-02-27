@@ -27,7 +27,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import zubkov.vadim.pruebasandroiddiseo.screens.menu.ui.Components.FilterViewModel
 
 const val maxFiltroDistancia = 300f
 
@@ -192,7 +191,7 @@ fun FiltroTexto(filter:FilterViewModel){
 }
 
 @Composable
-fun Filtros(filter: FilterViewModel)
+fun Filtros(filter: FilterViewModel, paddingValues: PaddingValues)
 {
     val mostrarFiltro by filter.mostrarFiltro.observeAsState(initial = filter.mostrarFiltro.value)
     var color by remember{ mutableStateOf(Color.LightGray)}
@@ -255,7 +254,7 @@ fun Filtros(filter: FilterViewModel)
                 SliderDistancia(filter)
                 Separador()
                 TituloFiltros("Actividad")
-                Actividades(filter)
+                Actividades(filter,paddingValues)
             }
         }
     }
@@ -329,10 +328,12 @@ fun SliderDistancia(filter:FilterViewModel){
 }
 
 @Composable
-fun Actividades(filter:FilterViewModel){
+fun Actividades(filter: FilterViewModel, paddingValues: PaddingValues){
     LazyHorizontalGrid(
         rows = GridCells.Adaptive(70.dp),
-        contentPadding = PaddingValues(8.dp)
+        contentPadding = PaddingValues(8.dp),
+        modifier = Modifier
+            .padding(top = paddingValues.calculateTopPadding(), bottom = paddingValues.calculateBottomPadding())
     ) {
 
         items(filter.categories) { item ->

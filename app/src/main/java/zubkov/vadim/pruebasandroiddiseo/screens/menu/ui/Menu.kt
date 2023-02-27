@@ -17,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import zubkov.vadim.pruebasandroiddiseo.screens.login.ui.UserViewModel
 import zubkov.vadim.pruebasandroiddiseo.screens.mapscreen.ui.MapViewModel
@@ -58,7 +57,7 @@ fun Menu(menuViewModel: MenuViewModel, navigationController: NavHostController,
 
         Column(){
             Buscador(filter)
-            Filtros(filter)
+            Filtros(filter,it)
             Separador()
             LazyColumn(
                 modifier = Modifier
