@@ -53,7 +53,8 @@ fun Profile(
     navigationController: NavHostController, user: PersonDTO,
     mapViewModel: MapViewModel, menuViewModel: MenuViewModel,
     userViewModel: UserViewModel, personViewModel: PersonViewModel,
-    fullScreen: Boolean = false
+    fullScreen: Boolean = false,
+    logout : Boolean = true
 ) {
     personViewModel.returnPerson(userViewModel)
     menuViewModel.devolverListaByEmail(user.email)
@@ -70,7 +71,8 @@ fun Profile(
         Header(
             name = user.nick,
             fullScreen,
-            navigationController
+            navigationController,
+            logout
         )
         Spacer(modifier = Modifier.height(4.dp))
         ProfileSection(
@@ -158,6 +160,7 @@ fun Header(
     name: String,
     mostrarAtras: Boolean,
     navigationController: NavHostController,
+    logout : Boolean
 ) {
     Box(
         modifier = Modifier
@@ -185,6 +188,20 @@ fun Header(
             fontSize = 20.sp,
             modifier = Modifier.align(Alignment.Center)
         )
+
+        if (logout){
+            IconButton(
+                onClick = {
+                    navigationController.navigate(Routes.Login.route)
+                },
+                modifier = Modifier.align(Alignment.TopEnd)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ExitToApp,
+                    contentDescription = ""
+                )
+            }
+        }
     }
 }
 

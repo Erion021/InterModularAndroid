@@ -28,7 +28,8 @@ fun ExternalUserScreen(navigationController: NavHostController, personViewModel:
                 menuViewModel,
                 userViewModel,
                 personViewModel,
-                true
+                true,
+                false
             )
         }
     }else{
