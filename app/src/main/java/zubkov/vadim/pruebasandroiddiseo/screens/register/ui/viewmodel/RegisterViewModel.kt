@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import zubkov.vadim.pruebasandroiddiseo.screens.models.navigation.Routes
 import zubkov.vadim.pruebasandroiddiseo.screens.register.domin.entity.RegisterModelFactory
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val registerUseCase: RegisterUseCase,
-    private val registerModelFactory: RegisterModelFactory
+    private val registerModelFactory: RegisterModelFactory,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
     private val _name = MutableLiveData<String>()
     val name: LiveData<String> = _name
@@ -67,8 +69,10 @@ class RegisterViewModel @Inject constructor(
     }
 
     fun onButtonRegisterPress(navigationController: NavHostController,context : Context) {
-        if (name.value == null && email.value == null && password.value == null){
+        if (name.value == null || email.value == null){
             Toast.makeText(context,"Debe introducir los datos", Toast.LENGTH_SHORT).show()
+        } else if (password.value!!.length < 8 && repeatPassword.value!!.length < 8) {
+            Toast.makeText(context,"Las contraseña es demasiado corta", Toast.LENGTH_SHORT).show()
         } else if (repeatPassword.value?.let { password.value?.compareTo(it) ?: 0 } != 0) {
             Toast.makeText(context,"Las contraseñeas deben coincidir", Toast.LENGTH_SHORT).show()
         } else {
@@ -87,7 +91,7 @@ class RegisterViewModel @Inject constructor(
                     nick = nick.value!!,
                     email = email.value!!,
                     password = password.value!!,
-                    description = "Agregueunadescripcion",
+                    description = "Agregue una descripcion",
                     photo = ""
                 )
                 val result = registerUseCase(userRegister)

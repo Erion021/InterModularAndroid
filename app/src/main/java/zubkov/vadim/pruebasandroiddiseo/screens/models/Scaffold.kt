@@ -36,20 +36,14 @@ fun TopBarContent(){
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ){
-            Row(verticalAlignment = Alignment.CenterVertically) {
-
-                Image(
-                    painterResource(R.drawable.icono_app),
-                    contentDescription = "icono_app",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.padding(5.dp)
-                        .weight(1f)
-                )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
                 Text(
                     "SENDERO SUR",
                     style = MaterialTheme.typography.h6,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(2.5f).padding(10.dp,0.dp)
                 )
             }
         }

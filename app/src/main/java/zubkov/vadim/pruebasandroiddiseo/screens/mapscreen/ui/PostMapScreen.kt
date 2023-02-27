@@ -50,11 +50,16 @@ fun PostRouteScreen(navigationController : NavHostController,mapViewModel: MapVi
                         .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ){
-                    Text(
-                        "Publicar Ruta",
-                        style = MaterialTheme.typography.h6,
-                        fontWeight = FontWeight.Bold,
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            "Publicar Ruta",
+                            style = MaterialTheme.typography.h6,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
             }
         },

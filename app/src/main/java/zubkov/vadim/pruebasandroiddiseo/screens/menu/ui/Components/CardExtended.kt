@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
@@ -151,7 +152,15 @@ fun CardExtendedComp(navigationController: NavHostController,ruta:MenuDTO,menuVi
         ) {
             if (menuViewModel.commentList.value!!.isEmpty()){
                 item{
-                    Text("Se el primero en comentar")
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                            Text(
+                                text = "¡Anímate a dejar un comentario!",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
                 }
             } else {
                 items(menuViewModel.commentList.value!!.size) { person ->
@@ -314,12 +323,20 @@ fun BottomCard(ruta:MenuDTO,menuViewModel: MenuViewModel,userViewModel: UserView
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp, 0.dp, 16.dp, 0.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(16.dp, 16.dp, 16.dp, 16.dp),
+        horizontalArrangement = Arrangement.Center
     ) {
-        MiniInfoCard(title = "Distancia", value = "${ruta.distance} m")
-        MiniInfoCard(title = "Dificultad", value = ruta.difficulty)
-        MiniInfoCard(title = "Actividad", value = ruta.category)
+        Column() {
+            MiniInfoCard(title = "Distancia", value = "${ruta.distance} m")
+            Spacer(modifier = Modifier.padding(10.dp))
+            MiniInfoCard(title = "Dificultad", value = ruta.difficulty)
+        }
+        Spacer(modifier = Modifier.padding(30.dp))
+        Column() {
+            MiniInfoCard(title = "Actividad", value = ruta.category)
+            Spacer(modifier = Modifier.padding(10.dp))
+            MiniInfoCard(title = "Duracion", value = "${ruta.duration}")
+        }
     }
     Spacer(modifier = Modifier.height(16.dp))
     GoogleMaps(ruta = ruta, mapViewModel = mapViewModel)
@@ -448,7 +465,7 @@ fun MiniInfoCard(title: String, value: String) {
             Text(
                 text = title,
                 modifier = Modifier.fillMaxWidth(),
-                color = Color.Gray,
+                color = MaterialTheme.colors.onPrimary,
                 style = MaterialTheme.typography.overline,
                 textAlign = TextAlign.Center
             )
